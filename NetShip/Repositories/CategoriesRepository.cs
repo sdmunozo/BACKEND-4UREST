@@ -11,14 +11,14 @@ namespace NetShip.Repositories
         {
             this.context = context;
         }
-        public async Task<int> Create(Category category)
+        public async Task<Guid> Create(Category category)
         {
             context.Add(category);
             await context.SaveChangesAsync();
             return category.Id;
         }
 
-        public async Task<bool> Exist(int id)
+        public async Task<bool> Exist(Guid id)
         {
             return await context.Categories.AnyAsync(x => x.Id == id);
         }
@@ -28,7 +28,7 @@ namespace NetShip.Repositories
             return await context.Categories.OrderBy(x => x.Name).ToListAsync();
         }
 
-        public async Task<Category?> GetCategory(int id)
+        public async Task<Category?> GetCategory(Guid id)
         {
             return await context.Categories.FirstOrDefaultAsync( x => x.Id == id);
         }
@@ -39,7 +39,7 @@ namespace NetShip.Repositories
             await context.SaveChangesAsync();
         }
 
-        public async Task Delete(int id)
+        public async Task Delete(Guid id)
         {
             await context.Categories.Where(x => x.Id == id).ExecuteDeleteAsync();
         }

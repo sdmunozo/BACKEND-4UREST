@@ -5,10 +5,10 @@ namespace NetShip.Repositories
     public interface ICategoriesRepository
     {
         Task<List<Category>> GetCategories();
-        Task<Category?> GetCategory(int id);
-        Task<int> Create(Category category);
-        Task<bool> Exist(int id); 
+        Task<Category?> GetCategory(Guid id);
+        Task<Guid> Create(Category category);
+        Task<bool> Exist(Guid id); 
         Task Update (Category category);
-        Task Delete (int id);
+        Task Delete (Guid id);
     }
 }

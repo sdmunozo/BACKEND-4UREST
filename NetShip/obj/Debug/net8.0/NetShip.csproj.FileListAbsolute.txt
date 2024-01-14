@@ -104,3 +104,4 @@ C:\Users\USER\Desktop\dev\BACKEND\NetShip\NetShip\bin\Debug\net8.0\zh-Hans\Micro
 C:\Users\USER\Desktop\dev\BACKEND\NetShip\NetShip\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\USER\Desktop\dev\BACKEND\NetShip\NetShip\bin\Debug\net8.0\AutoMapper.dll
 C:\Users\USER\Desktop\dev\BACKEND\NetShip\NetShip\bin\Debug\net8.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+C:\Users\USER\Desktop\dev\BACKEND\NetShip\NetShip\obj\Debug\net8.0\NetShip.sourcelink.json

@@ -12,10 +12,10 @@ namespace NetShip.Endpoints
         public static RouteGroupBuilder MapCategories(this RouteGroupBuilder group)
         {
             group.MapGet("/", getCategories).CacheOutput(c => c.Expire(TimeSpan.FromDays(30)).Tag("get-categories"));
-            group.MapGet("/{id:int}", getCategory);
+            group.MapGet("/{id:Guid}", getCategory);
             group.MapPost("/", createCategory);
-            group.MapPut("/{id:int}", updateCategory);
-            group.MapDelete("/{id:int}", deleteCategory);
+            group.MapPut("/{id:Guid}", updateCategory);
+            group.MapDelete("/{id:Guid}", deleteCategory);
 
             return group;
         }
@@ -35,7 +35,7 @@ namespace NetShip.Endpoints
             return TypedResults.Created($"/category/{id}", categoryDTO);
         }
 
-        static async Task<Results<Ok<CategoryDTO>, NotFound>> getCategory(ICategoriesRepository repository, int id, IMapper mapper)
+        static async Task<Results<Ok<CategoryDTO>, NotFound>> getCategory(ICategoriesRepository repository, Guid id, IMapper mapper)
         {
             var category = await repository.GetCategory(id);
 
@@ -57,7 +57,7 @@ namespace NetShip.Endpoints
 
         }
 
-        static async Task<Results<NoContent, NotFound>> updateCategory(int id, CreateCategoryDTO createCategoryDTO, ICategoriesRepository repository, IOutputCacheStore outputCacheStore, IMapper mapper)
+        static async Task<Results<NoContent, NotFound>> updateCategory(Guid id, CreateCategoryDTO createCategoryDTO, ICategoriesRepository repository, IOutputCacheStore outputCacheStore, IMapper mapper)
         {
             var exist = await repository.Exist(id);
 
@@ -72,7 +72,29 @@ namespace NetShip.Endpoints
             return TypedResults.NoContent();
         }
 
-        static async Task<Results<NoContent, NotFound>> deleteCategory(int id, ICategoriesRepository repository, IOutputCacheStore outputCacheStore)
+        static async Task<Results<NoContent, NotFound>> deleteCategory(Guid id, ICategoriesRepository repository, IOutputCacheStore outputCacheStore)
+        {
+            var category = await repository.GetCategory(id);
+
+            if (category == null)
+                return TypedResults.NotFound();
+
+            category.Status = "Eliminado";
+
+            await repository.Update(category);
+            await outputCacheStore.EvictByTagAsync("get-categories", default);
+
+            return TypedResults.NoContent();
+        }
+
+
+
+        /*
+         * 
+         * Endpoint para eliminar permanentemente:
+         * 
+        
+        static async Task<Results<NoContent, NotFound>> deleteCategory(Guid id, ICategoriesRepository repository, IOutputCacheStore outputCacheStore)
         {
             var exist = await repository.Exist(id);
 
@@ -82,6 +104,8 @@ namespace NetShip.Endpoints
             await outputCacheStore.EvictByTagAsync("get-categories", default);
             return TypedResults.NoContent();
         }
+
+        */
     }
 }
 
