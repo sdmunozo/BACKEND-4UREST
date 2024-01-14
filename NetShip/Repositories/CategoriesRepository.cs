@@ -1,15 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NetShip.DTOs.Common;
 using NetShip.Entities;
+using NetShip.Utilities;
 
 namespace NetShip.Repositories
 {
     public class CategoriesRepository : ICategoriesRepository
     {
         private readonly ApplicationDbContext context;
+        private readonly HttpContext httpContext;
 
-        public CategoriesRepository(ApplicationDbContext context)
+        public CategoriesRepository(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             this.context = context;
+            httpContext = httpContextAccessor.HttpContext!;
         }
         public async Task<Guid> Create(Category category)
         {
@@ -23,12 +27,14 @@ namespace NetShip.Repositories
             return await context.Categories.AnyAsync(x => x.Id == id);
         }
 
-        public async Task<List<Category>> GetCategories()
+        public async Task<List<Category>> GetAll(PaginationDTO paginationDTO)
         {
-            return await context.Categories.OrderBy(x => x.Name).ToListAsync();
+            var queryable = context.Categories.AsQueryable();
+            await httpContext.InsertPaginationParametersInHeader(queryable);
+            return await context.Categories.Paginate(paginationDTO).OrderBy(x => x.Name).ToListAsync();
         }
 
-        public async Task<Category?> GetCategory(Guid id)
+        public async Task<Category?> GetById(Guid id)
         {
             return await context.Categories.FirstOrDefaultAsync( x => x.Id == id);
         }
@@ -43,5 +49,11 @@ namespace NetShip.Repositories
         {
             await context.Categories.Where(x => x.Id == id).ExecuteDeleteAsync();
         }
+
+        public async Task<List<Category>> GetByName(string name)
+        {
+            return await context.Categories.Where(c => c.Name.Contains(name)).OrderBy(c => c.Name).ToListAsync();
+        }
+
     }
 }

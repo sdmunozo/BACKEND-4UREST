@@ -1,0 +1,49 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\categories\\534d8ac5-e3c7-4cdb-a78b-fd21b9419440.png",
+      "PackagePath": "staticwebassets\\categories\\534d8ac5-e3c7-4cdb-a78b-fd21b9419440.png"
+    },
+    {
+      "Id": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\categories\\5ca67234-952b-45a4-9bda-aab36e221c90.png",
+      "PackagePath": "staticwebassets\\categories\\5ca67234-952b-45a4-9bda-aab36e221c90.png"
+    },
+    {
+      "Id": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\categories\\6ecd6a62-cd18-4835-b320-5a7c0ffd2062.png",
+      "PackagePath": "staticwebassets\\categories\\6ecd6a62-cd18-4835-b320-5a7c0ffd2062.png"
+    },
+    {
+      "Id": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\categories\\9c083030-ea7a-4726-a880-13954596d119.png",
+      "PackagePath": "staticwebassets\\categories\\9c083030-ea7a-4726-a880-13954596d119.png"
+    },
+    {
+      "Id": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\categories\\b86592fa-41ae-4200-9a15-f7a106035246.png",
+      "PackagePath": "staticwebassets\\categories\\b86592fa-41ae-4200-9a15-f7a106035246.png"
+    },
+    {
+      "Id": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\categories\\ccab5397-1846-4f5b-8095-bc2d3e92c363.png",
+      "PackagePath": "staticwebassets\\categories\\ccab5397-1846-4f5b-8095-bc2d3e92c363.png"
+    },
+    {
+      "Id": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\products\\504e9c33-7e11-4caf-a644-b4ecfe96b39d.png",
+      "PackagePath": "staticwebassets\\products\\504e9c33-7e11-4caf-a644-b4ecfe96b39d.png"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.NetShip.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.NetShip.props",
+      "PackagePath": "build\\NetShip.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.NetShip.props",
+      "PackagePath": "buildMultiTargeting\\NetShip.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.NetShip.props",
+      "PackagePath": "buildTransitive\\NetShip.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

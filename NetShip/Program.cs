@@ -6,6 +6,7 @@ using NetShip;
 using NetShip.Endpoints;
 using NetShip.Entities;
 using NetShip.Repositories;
+using NetShip.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 // inicio de area de los servicios 
@@ -25,6 +26,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
 builder.Services.AddScoped<IProductsRepository, ProductsRepository>();
 
+builder.Services.AddScoped<IFileStorage, FileLocalStorage>();
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddAutoMapper(typeof(Program));
 
 // fin de area de los servicios 
@@ -34,10 +38,12 @@ var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
+app.UseStaticFiles();
 app.UseCors();
 app.UseOutputCache();
 
 app.MapGroup("/category").MapCategories();
+app.MapGroup("/product").MapProducts();
 
 
 
