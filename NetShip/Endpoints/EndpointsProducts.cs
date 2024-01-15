@@ -20,7 +20,8 @@ namespace NetShip.Endpoints
             group.MapGet("/{id:Guid}", getProduct);
             group.MapPost("/", createProduct).DisableAntiforgery();
             group.MapPut("/{id:Guid}", updateProduct).DisableAntiforgery();
-            group.MapDelete("/{id:Guid}", deleteProduct);
+            group.MapDelete("/{id:Guid}", deleteProduct); 
+            group.MapDelete("softDelete/{id:Guid}", softDeleteProduct);
             group.MapGet("getByName/{name}", getProductByName);
 
             return group;
@@ -77,21 +78,23 @@ namespace NetShip.Endpoints
         }
 
         static async Task<Results<NoContent, NotFound>> updateProduct(
-                    Guid id,
-                    [FromForm] CreateProductDTO createProductDTO,
-                    IProductsRepository repository,
-                    IFileStorage fileStorage,
-                    IOutputCacheStore outputCacheStore,
-                    IMapper mapper)
+            Guid id,
+            [FromForm] CreateProductDTO createProductDTO,
+            IProductsRepository repository,
+            IFileStorage fileStorage,
+            IOutputCacheStore outputCacheStore,
+            IMapper mapper)
         {
-            var regDB = await repository.GetById(id);
+            // Obtén la entidad existente del contexto sin crear una nueva instancia.
+            var registerToUpdate = await repository.GetById(id);
 
-            if (regDB is null)
+            if (registerToUpdate is null)
+            {
                 return TypedResults.NotFound();
+            }
 
-            var registerToUpdate = mapper.Map<Product>(createProductDTO);
-            registerToUpdate.Id = id;
-            registerToUpdate.Icon = regDB.Icon;
+            // Actualiza las propiedades de la entidad con los valores del DTO.
+            mapper.Map(createProductDTO, registerToUpdate);
 
             if (createProductDTO.Icon is not null)
             {
@@ -99,12 +102,15 @@ namespace NetShip.Endpoints
                 registerToUpdate.Icon = url;
             }
 
+            // Marca la entidad como modificada en el contexto.
             await repository.Update(registerToUpdate);
+
             await outputCacheStore.EvictByTagAsync("get-products", default);
             return TypedResults.NoContent();
         }
 
-        static async Task<Results<NoContent, NotFound>> deleteProduct(Guid id, IProductsRepository repository, IOutputCacheStore outputCacheStore)
+
+        static async Task<Results<NoContent, NotFound>> softDeleteProduct(Guid id, IProductsRepository repository, IOutputCacheStore outputCacheStore)
         {
             var product = await repository.GetById(id);
 
@@ -119,6 +125,26 @@ namespace NetShip.Endpoints
             return TypedResults.NoContent();
         }
 
+
+        static async Task<Results<NoContent, NotFound>> deleteProduct(
+                    Guid id,
+                    IProductsRepository repository,
+                    IFileStorage fileStorage,
+                    IOutputCacheStore outputCacheStore)
+        {
+
+            var regDB = await repository.GetById(id);
+
+            if(regDB is null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            await repository.Delete(id);
+            await fileStorage.Delete(regDB.Icon, container);
+            await outputCacheStore.EvictByTagAsync("get-products", default);
+            return TypedResults.NoContent();
+        }
 
     }
 

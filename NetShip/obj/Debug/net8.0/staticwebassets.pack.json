@@ -1,6 +1,10 @@
 {
   "Files": [
     {
+      "Id": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\categories\\2d668aca-f6e5-4a38-9923-f4a18ab555b7.png",
+      "PackagePath": "staticwebassets\\categories\\2d668aca-f6e5-4a38-9923-f4a18ab555b7.png"
+    },
+    {
       "Id": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\categories\\534d8ac5-e3c7-4cdb-a78b-fd21b9419440.png",
       "PackagePath": "staticwebassets\\categories\\534d8ac5-e3c7-4cdb-a78b-fd21b9419440.png"
     },
@@ -25,8 +29,20 @@
       "PackagePath": "staticwebassets\\categories\\ccab5397-1846-4f5b-8095-bc2d3e92c363.png"
     },
     {
-      "Id": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\products\\504e9c33-7e11-4caf-a644-b4ecfe96b39d.png",
-      "PackagePath": "staticwebassets\\products\\504e9c33-7e11-4caf-a644-b4ecfe96b39d.png"
+      "Id": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\categories\\daefb0d5-f179-40e2-bf29-abce4754ad2f.png",
+      "PackagePath": "staticwebassets\\categories\\daefb0d5-f179-40e2-bf29-abce4754ad2f.png"
+    },
+    {
+      "Id": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\categories\\e55b33c2-49c5-41b7-9434-f2fb7e982877.png",
+      "PackagePath": "staticwebassets\\categories\\e55b33c2-49c5-41b7-9434-f2fb7e982877.png"
+    },
+    {
+      "Id": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\categories\\e7227707-ea96-458f-b0a3-0e6c9f3038a2.png",
+      "PackagePath": "staticwebassets\\categories\\e7227707-ea96-458f-b0a3-0e6c9f3038a2.png"
+    },
+    {
+      "Id": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\products\\f52e9116-c763-46b9-a097-6baf86bb3321.png",
+      "PackagePath": "staticwebassets\\products\\f52e9116-c763-46b9-a097-6baf86bb3321.png"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.NetShip.Microsoft.AspNetCore.StaticWebAssets.props",

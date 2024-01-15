@@ -21,6 +21,7 @@ namespace NetShip.Endpoints
             group.MapPost("/", createCategory).DisableAntiforgery();
             group.MapPut("/{id:Guid}", updateCategory).DisableAntiforgery();
             group.MapDelete("/{id:Guid}", deleteCategory);
+            group.MapDelete("softDelete/{id:Guid}", softDeleteCategory); 
             group.MapGet("getByName/{name}", getCategoryByName);
 
             return group;
@@ -78,23 +79,24 @@ namespace NetShip.Endpoints
 
         }
 
-
         static async Task<Results<NoContent, NotFound>> updateCategory(
             Guid id,
-            [FromForm] CreateCategoryDTO createCategoryDTO, 
-            ICategoriesRepository repository, 
+            [FromForm] CreateCategoryDTO createCategoryDTO,
+            ICategoriesRepository repository,
             IFileStorage fileStorage,
-            IOutputCacheStore outputCacheStore, 
+            IOutputCacheStore outputCacheStore,
             IMapper mapper)
         {
-            var regDB = await repository.GetById(id);
+            // Obtén la entidad existente del contexto sin crear una nueva instancia.
+            var registerToUpdate = await repository.GetById(id);
 
-            if (regDB is null)
+            if (registerToUpdate is null)
+            {
                 return TypedResults.NotFound();
+            }
 
-            var registerToUpdate = mapper.Map<Category>(createCategoryDTO);
-            registerToUpdate.Id = id;
-            registerToUpdate.Icon = regDB.Icon;
+            // Actualiza las propiedades de la entidad con los valores del DTO.
+            mapper.Map(createCategoryDTO, registerToUpdate);
 
             if (createCategoryDTO.Icon is not null)
             {
@@ -102,12 +104,15 @@ namespace NetShip.Endpoints
                 registerToUpdate.Icon = url;
             }
 
+            // Marca la entidad como modificada en el contexto.
             await repository.Update(registerToUpdate);
+
             await outputCacheStore.EvictByTagAsync("get-categories", default);
             return TypedResults.NoContent();
         }
 
-        static async Task<Results<NoContent, NotFound>> deleteCategory(Guid id, ICategoriesRepository repository, IOutputCacheStore outputCacheStore)
+
+        static async Task<Results<NoContent, NotFound>> softDeleteCategory(Guid id, ICategoriesRepository repository, IOutputCacheStore outputCacheStore)
         {
             var category = await repository.GetById(id);
 
@@ -122,25 +127,25 @@ namespace NetShip.Endpoints
             return TypedResults.NoContent();
         }
 
-
-
-        /*
-         * 
-         * Endpoint para eliminar permanentemente:
-         * 
-        
-        static async Task<Results<NoContent, NotFound>> deleteCategory(Guid id, ICategoriesRepository repository, IOutputCacheStore outputCacheStore)
+        static async Task<Results<NoContent, NotFound>> deleteCategory(
+            Guid id,
+            ICategoriesRepository repository,
+            IFileStorage fileStorage,
+            IOutputCacheStore outputCacheStore)
         {
-            var exist = await repository.Exist(id);
 
-            if (!exist)
+            var regDB = await repository.GetById(id);
+
+            if (regDB is null)
+            {
                 return TypedResults.NotFound();
+            }
+
             await repository.Delete(id);
+            await fileStorage.Delete(regDB.Icon, container);
             await outputCacheStore.EvictByTagAsync("get-categories", default);
             return TypedResults.NoContent();
         }
-
-        */
     }
 }
 

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "9idoQKWXjsb6j1O1rwVuN05iFhD0s/fEZH51USJnP9U=",
+  "Hash": "5uWuv9gM1eYbWDyjIhsGQv06prjKm/PNi6eT0THOcOw=",
   "Source": "NetShip",
   "BasePath": "_content/NetShip",
   "Mode": "Default",
@@ -16,6 +16,25 @@
     }
   ],
   "Assets": [
+    {
+      "Identity": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\categories\\2d668aca-f6e5-4a38-9923-f4a18ab555b7.png",
+      "SourceId": "NetShip",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\",
+      "BasePath": "_content/NetShip",
+      "RelativePath": "categories/2d668aca-f6e5-4a38-9923-f4a18ab555b7.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\categories\\2d668aca-f6e5-4a38-9923-f4a18ab555b7.png"
+    },
     {
       "Identity": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\categories\\534d8ac5-e3c7-4cdb-a78b-fd21b9419440.png",
       "SourceId": "NetShip",
@@ -131,12 +150,12 @@
       "OriginalItemSpec": "wwwroot\\categories\\ccab5397-1846-4f5b-8095-bc2d3e92c363.png"
     },
     {
-      "Identity": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\products\\504e9c33-7e11-4caf-a644-b4ecfe96b39d.png",
+      "Identity": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\categories\\daefb0d5-f179-40e2-bf29-abce4754ad2f.png",
       "SourceId": "NetShip",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\",
       "BasePath": "_content/NetShip",
-      "RelativePath": "products/504e9c33-7e11-4caf-a644-b4ecfe96b39d.png",
+      "RelativePath": "categories/daefb0d5-f179-40e2-bf29-abce4754ad2f.png",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -147,7 +166,64 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\products\\504e9c33-7e11-4caf-a644-b4ecfe96b39d.png"
+      "OriginalItemSpec": "wwwroot\\categories\\daefb0d5-f179-40e2-bf29-abce4754ad2f.png"
+    },
+    {
+      "Identity": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\categories\\e55b33c2-49c5-41b7-9434-f2fb7e982877.png",
+      "SourceId": "NetShip",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\",
+      "BasePath": "_content/NetShip",
+      "RelativePath": "categories/e55b33c2-49c5-41b7-9434-f2fb7e982877.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\categories\\e55b33c2-49c5-41b7-9434-f2fb7e982877.png"
+    },
+    {
+      "Identity": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\categories\\e7227707-ea96-458f-b0a3-0e6c9f3038a2.png",
+      "SourceId": "NetShip",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\",
+      "BasePath": "_content/NetShip",
+      "RelativePath": "categories/e7227707-ea96-458f-b0a3-0e6c9f3038a2.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\categories\\e7227707-ea96-458f-b0a3-0e6c9f3038a2.png"
+    },
+    {
+      "Identity": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\products\\f52e9116-c763-46b9-a097-6baf86bb3321.png",
+      "SourceId": "NetShip",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\",
+      "BasePath": "_content/NetShip",
+      "RelativePath": "products/f52e9116-c763-46b9-a097-6baf86bb3321.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\products\\f52e9116-c763-46b9-a097-6baf86bb3321.png"
     }
   ]
 }

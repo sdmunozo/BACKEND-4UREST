@@ -31,7 +31,7 @@ namespace NetShip.Repositories
 
         public async Task<List<Product>> GetAll(PaginationDTO paginationDTO)
         {
-            var queryable = context.Categories.AsQueryable();
+            var queryable = context.Products.AsQueryable();
             await httpContext.InsertPaginationParametersInHeader(queryable);
             return await context.Products.OrderBy(x => x.Name).Paginate(paginationDTO).ToListAsync();
         }
