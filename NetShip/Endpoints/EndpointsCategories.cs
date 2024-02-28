@@ -16,7 +16,8 @@ namespace NetShip.Endpoints
 
         public static RouteGroupBuilder MapCategories(this RouteGroupBuilder group)
         {
-            group.MapGet("/", getCategories).CacheOutput(c => c.Expire(TimeSpan.FromDays(30)).Tag("get-categories"));
+            group.MapGet("/", getCategories)
+                .CacheOutput(c => c.Expire(TimeSpan.FromDays(30)).Tag("get-categories")).RequireAuthorization();
             group.MapGet("/{id:Guid}", getCategory);
             group.MapPost("/", createCategory).DisableAntiforgery();
             group.MapPut("/{id:Guid}", updateCategory).DisableAntiforgery();
