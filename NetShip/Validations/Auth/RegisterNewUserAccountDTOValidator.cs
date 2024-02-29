@@ -9,7 +9,7 @@ namespace NetShip.Validations.Auth
     {
 
         public RegisterNewUserAccountDTOValidator()
-        {
+        { 
             // Validacion de user_first_name
             RuleFor(x => x.UserFirstName).NotEmpty().WithMessage(Tools.RequiredFieldMessage)
                 .MinimumLength(2).WithMessage(Tools.MinimumLengthMessage)
@@ -41,7 +41,7 @@ namespace NetShip.Validations.Auth
             // Validacion de branch_name
             RuleFor(x => x.BranchName).NotEmpty().WithMessage(Tools.RequiredFieldMessage)
                 .MinimumLength(2).WithMessage(Tools.MinimumLengthMessage)
-                .MaximumLength(50).WithMessage(Tools.MaximumLengthMessage);
+                .MaximumLength(50).WithMessage(Tools.MaximumLengthMessage); 
         }
 
         

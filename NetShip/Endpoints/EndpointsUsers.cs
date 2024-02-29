@@ -26,8 +26,12 @@ namespace NetShip.Endpoints
     [FromServices] UserManager<ApplicationUser> userManager,
     [FromServices] IBrandsRepository brandsRepository,
     [FromServices] IBranchesRepository branchesRepository,
-    IConfiguration configuration)
+    IConfiguration configuration, ILoggerFactory loggerFactory)
         {
+
+            var type = typeof(EndpointsUsers);
+            var logger = loggerFactory.CreateLogger(type.FullName!);
+            logger.LogInformation("registrando usuario");
             var user = new ApplicationUser
             {
                 UserName = registerNewUserAccountDTO.UserEmail,
@@ -66,7 +70,9 @@ namespace NetShip.Endpoints
                     new Claim("branch_id", branchId.ToString()),
                 };
 
-                var responseCredentials = buildToken(userClaims, configuration);
+                //var responseCredentials = buildToken(userClaims, configuration);
+                var responseCredentials = buildToken(userClaims, user, configuration);
+
                 return TypedResults.Ok(responseCredentials);
             }
             else
@@ -96,7 +102,9 @@ namespace NetShip.Endpoints
             // Agregar más claims según sea necesario
         };
 
-                var authResult = buildToken(claims, configuration);
+                //var authResult = buildToken(claims, configuration);
+                var authResult = buildToken(claims, user, configuration);
+
                 return TypedResults.Ok(authResult);
             }
             else
@@ -105,7 +113,36 @@ namespace NetShip.Endpoints
             }
         }
 
+        private static AuthenticationResponseDTO buildToken(List<Claim> claims, ApplicationUser user, IConfiguration configuration)
+        {
+            var key = Keys.GetKey(configuration);
+            var creds = new SigningCredentials(key.First(), SecurityAlgorithms.HmacSha256);
+            var expiration = DateTime.UtcNow.AddDays(30);
 
+            var securityToken = new JwtSecurityToken(issuer: null, audience: null, claims: claims, expires: expiration, signingCredentials: creds);
+
+            var token = new JwtSecurityTokenHandler().WriteToken(securityToken);
+
+            // Crear el UserResponseDTO basado en la información del ApplicationUser
+            var userResponse = new UserResponseDTO
+            {
+                UserId = user.Id,
+                UserFirstName = user.FirstName,
+                UserLastName = user.LastName,
+                UserEmail = user.Email,
+            };
+
+            // Incluir UserResponseDTO en AuthenticationResponseDTO
+            return new AuthenticationResponseDTO
+            {
+                Token = token,
+                Expiration = expiration,
+                User = userResponse
+            };
+        }
+
+
+        /*
         private static AuthenticationResponseDTO buildToken(List<Claim> claims, IConfiguration configuration)
         {
             var key = Keys.GetKey(configuration);
@@ -121,6 +158,6 @@ namespace NetShip.Endpoints
                 Token = token,
                 Expiration = expiration,
             };
-        }
+        } */
     }
 }

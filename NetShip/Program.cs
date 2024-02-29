@@ -52,6 +52,8 @@ builder.Services.AddScoped<IFileStorage, FileLocalStorage>();
 builder.Services.AddTransient<IUserServices, UserServices>();
 builder.Services.AddHttpContextAccessor();
 
+
+
 builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
@@ -68,6 +70,15 @@ options.TokenValidationParameters = new TokenValidationParameters
     ClockSkew = TimeSpan.Zero
 });
 builder.Services.AddAuthorization();
+
+builder.Services.AddCors(options => options.AddDefaultPolicy(
+    builder =>
+    {
+        builder.WithOrigins("http://localhost:49408", "http://localhost:5215")
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    }));
+
 
 // fin de area de los servicios 
 var app = builder.Build();
