@@ -55,5 +55,28 @@ namespace NetShip.Repositories
             return await context.Brands.Where(c => c.Name.Contains(name)).OrderBy(c => c.Name).ToListAsync();
         }
 
+        public async Task<List<Guid>> GetBrandIdsByUserId(string userId)
+        {
+            return await context.Brands
+                                .Where(b => b.User.Id == userId)
+                                .Select(b => b.Id)
+                                .ToListAsync();
+        }
+
+        public async Task<Guid?> GetFirstBrandIdByUserId(string userId)
+        {
+            return await context.Brands
+                                .Where(b => b.User.Id == userId)
+                                .Select(b => b.Id)
+                                .FirstOrDefaultAsync();
+        }
+
+        public async Task<List<Brand>> GetBrandsWithBranchesByUserId(string userId)
+        {
+            return await context.Brands
+                                .Where(b => b.User.Id == userId)
+                                .Include(b => b.Branches) 
+                                .ToListAsync();
+        }
     }
 }

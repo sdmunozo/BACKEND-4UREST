@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using NetShip.DTOs.Auth;
 using NetShip.Entities;
@@ -18,6 +19,7 @@ namespace NetShip.Endpoints
         public static RouteGroupBuilder MapUsers(this RouteGroupBuilder group) {
             group.MapPost("/register", Register).AddEndpointFilter<ValidationsFilter<RegisterNewUserAccountDTO>>();
             group.MapPost("/login", Login).AddEndpointFilter<ValidationsFilter<LoginRequestDTO>>();
+            group.MapPost("/auth", AuthenticateToken).Produces<AuthenticationResponseDTO>(StatusCodes.Status200OK).Produces(StatusCodes.Status401Unauthorized);
             return group;
         }
 
@@ -62,13 +64,17 @@ namespace NetShip.Endpoints
 
                 var userClaims = new List<Claim>
                 {
-                    new Claim("id", user.Id),
-                    new Claim("first_name", user.FirstName),
-                    new Claim("last_name", user.LastName),
-                    new Claim("email", user.Email),
-                    new Claim("brand_id", brandId.ToString()),
-                    new Claim("branch_id", branchId.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id),
+                    new Claim(ClaimTypes.GivenName, user.FirstName),
+                    new Claim(ClaimTypes.Surname, user.LastName),
+                    new Claim(ClaimTypes.Email, user.Email),
                 };
+
+                foreach (var claim in userClaims)
+                {
+                    logger.LogInformation($"{claim.Type}: {claim.Value}");
+                }
+
 
                 //var responseCredentials = buildToken(userClaims, configuration);
                 var responseCredentials = buildToken(userClaims, user, configuration);
@@ -83,8 +89,11 @@ namespace NetShip.Endpoints
 
         static async Task<Results<Ok<AuthenticationResponseDTO>, BadRequest<string>>> Login(
             LoginRequestDTO loginRequestDTO, [FromServices] SignInManager<ApplicationUser> signInManager,
-            [FromServices] UserManager<ApplicationUser> userManager, IConfiguration configuration)
+            [FromServices] UserManager<ApplicationUser> userManager, IConfiguration configuration, ILoggerFactory loggerFactory)
         {
+            var type = typeof(EndpointsUsers);
+            var logger = loggerFactory.CreateLogger(type.FullName!);
+
             var user = await userManager.FindByEmailAsync(loginRequestDTO.UserEmail);
 
             if (user == null)
@@ -97,12 +106,19 @@ namespace NetShip.Endpoints
             if (result.Succeeded)
             {
                 var claims = new List<Claim>
-        {
-            new Claim("email", loginRequestDTO.UserEmail),
-            // Agregar más claims según sea necesario
-        };
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, user.Id),
+                        new Claim(ClaimTypes.GivenName, user.FirstName),
+                        new Claim(ClaimTypes.Surname, user.LastName),
+                        new Claim(ClaimTypes.Email, user.Email),
+                    };
 
-                //var authResult = buildToken(claims, configuration);
+                foreach (var claim in claims)
+                {
+                    logger.LogInformation($"{claim.Type}: {claim.Value}");
+                }
+
+
                 var authResult = buildToken(claims, user, configuration);
 
                 return TypedResults.Ok(authResult);
@@ -110,6 +126,73 @@ namespace NetShip.Endpoints
             else
             {
                 return TypedResults.BadRequest("Login incorrecto");
+            }
+        }
+
+        static async Task<IResult> AuthenticateToken(HttpRequest request, [FromServices] IConfiguration configuration, ILoggerFactory loggerFactory)
+        {
+            var type = typeof(EndpointsUsers);
+            var logger = loggerFactory.CreateLogger(type.FullName!);
+
+            if (request.Headers.TryGetValue("Authorization", out var authHeader))
+            {
+                var token = authHeader.ToString().Split(" ").Last();
+                if (ValidateToken(token, configuration, out var tokenClaims))
+                {
+                    // Usa los tipos de claims estándar de .NET
+                    var userIdClaim = tokenClaims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+                    var firstNameClaim = tokenClaims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName);
+                    var lastNameClaim = tokenClaims.FirstOrDefault(c => c.Type == ClaimTypes.Surname);
+                    var emailClaim = tokenClaims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+
+                    if (userIdClaim == null || firstNameClaim == null || lastNameClaim == null || emailClaim == null)
+                    {
+                        return Results.Json(new { msg = "Token no válido - Claim(s) faltante(s)" }, statusCode: StatusCodes.Status401Unauthorized);
+                    }
+
+                    var user = new ApplicationUser
+                    {
+                        Id = userIdClaim.Value,
+                        FirstName = firstNameClaim.Value,
+                        LastName = lastNameClaim.Value,
+                        Email = emailClaim.Value,
+                    };
+
+                    var authResponse = buildToken(new List<Claim> { userIdClaim, firstNameClaim, lastNameClaim, emailClaim }, user, configuration);
+                    return Results.Ok(authResponse);
+                }
+                else
+                {
+                    return Results.Json(new { msg = "Token no válido" }, statusCode: StatusCodes.Status401Unauthorized);
+                }
+            }
+            return Results.BadRequest("Authorization header is missing.");
+        }
+
+
+
+        private static bool ValidateToken(string token, IConfiguration configuration, out List<Claim> tokenClaims)
+        {
+            tokenClaims = null;
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = Keys.GetKey(configuration).First(),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                // Aquí puedes añadir más validaciones según sea necesario
+            };
+
+            try
+            {
+                var principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+                tokenClaims = principal.Claims.ToList();
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
 
@@ -140,24 +223,5 @@ namespace NetShip.Endpoints
                 User = userResponse
             };
         }
-
-
-        /*
-        private static AuthenticationResponseDTO buildToken(List<Claim> claims, IConfiguration configuration)
-        {
-            var key = Keys.GetKey(configuration);
-            var creds = new SigningCredentials(key.First(), SecurityAlgorithms.HmacSha256);
-            var expiration = DateTime.UtcNow.AddDays(30);
-
-            var securityToken = new JwtSecurityToken(issuer: null, audience: null, claims: claims, expires: expiration, signingCredentials: creds);
-
-            var token = new JwtSecurityTokenHandler().WriteToken(securityToken);
-
-            return new AuthenticationResponseDTO
-            {
-                Token = token,
-                Expiration = expiration,
-            };
-        } */
     }
 }

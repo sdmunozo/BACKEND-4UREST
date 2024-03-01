@@ -54,5 +54,24 @@ namespace NetShip.Repositories
         {
             return await context.Branches.Where(c => c.Name.Contains(name)).OrderBy(c => c.Name).ToListAsync();
         }
+
+        // En BranchesRepository
+
+        public async Task<List<Guid>> GetBranchIdsByBrandId(Guid brandId)
+        {
+            return await context.Branches
+                                .Where(branch => branch.BrandId == brandId)
+                                .Select(branch => branch.Id)
+                                .ToListAsync();
+        }
+
+        public async Task<Guid?> GetFirstBranchIdByBrandId(Guid brandId)
+        {
+            return await context.Branches
+                                .Where(branch => branch.BrandId == brandId)
+                                .Select(branch => branch.Id)
+                                .FirstOrDefaultAsync();
+        }
+
     }
 }
