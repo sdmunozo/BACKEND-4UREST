@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NetShip.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240228181647_DatabaseUpdated")]
-    partial class DatabaseUpdated
+    [Migration("20240301190542_InitDB")]
+    partial class InitDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -284,6 +284,42 @@ namespace NetShip.Migrations
                     b.ToTable("Brands", "MasterBase");
                 });
 
+            modelBuilder.Entity("NetShip.Entities.Catalog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BranchId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Icon")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsScheduleActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Sort")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
+
+                    b.ToTable("Catalogs", "MasterBase");
+                });
+
             modelBuilder.Entity("NetShip.Entities.Category", b =>
                 {
                     b.Property<Guid>("Id")
@@ -415,9 +451,23 @@ namespace NetShip.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("NetShip.Entities.Catalog", b =>
+                {
+                    b.HasOne("NetShip.Entities.Branch", null)
+                        .WithMany("Catalogs")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("NetShip.Entities.ApplicationUser", b =>
                 {
                     b.Navigation("Brands");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.Branch", b =>
+                {
+                    b.Navigation("Catalogs");
                 });
 
             modelBuilder.Entity("NetShip.Entities.Brand", b =>

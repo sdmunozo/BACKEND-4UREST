@@ -2,6 +2,7 @@
 using NetShip.DTOs.Auth;
 using NetShip.DTOs.Branch;
 using NetShip.DTOs.Brand;
+using NetShip.DTOs.CatalogDTOs;
 using NetShip.DTOs.Category;
 using NetShip.DTOs.Product;
 using NetShip.Entities;
@@ -25,6 +26,11 @@ namespace NetShip.Utilities
 
             CreateMap<CreateBranchDTO, Branch>();
             CreateMap<Branch, BranchDTO>();
+
+            CreateMap<Catalog, CatalogDetailsDTO>();
+            CreateMap<CreateCatalogDTO, Catalog>();
+            CreateMap<UpdateCatalogDTO, Catalog>().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
         }
     }
 }

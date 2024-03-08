@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NetShip.DTOs.Branch;
 using NetShip.DTOs.Common;
 using NetShip.Entities;
 using NetShip.Utilities;
@@ -15,6 +16,20 @@ namespace NetShip.Repositories
             this.context = context;
             httpContext = httpContextAccessor.HttpContext!;
         }
+
+        public async Task<List<BranchDTO>> GetByBrandId(Guid brandId)
+        {
+            return await context.Branches
+                                .Where(branch => branch.BrandId == brandId)
+                                .Select(branch => new BranchDTO
+                                {
+                                    Id = branch.Id,
+                                    Name = branch.Name
+                                })
+                                .ToListAsync();
+        }
+
+
         public async Task<Guid> Create(Branch branch)
         {
             context.Add(branch);
@@ -55,8 +70,6 @@ namespace NetShip.Repositories
             return await context.Branches.Where(c => c.Name.Contains(name)).OrderBy(c => c.Name).ToListAsync();
         }
 
-        // En BranchesRepository
-
         public async Task<List<Guid>> GetBranchIdsByBrandId(Guid brandId)
         {
             return await context.Branches
@@ -71,6 +84,19 @@ namespace NetShip.Repositories
                                 .Where(branch => branch.BrandId == brandId)
                                 .Select(branch => branch.Id)
                                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<BranchDTO?> GetFirstByBrandId(Guid brandId)
+        {
+            var branch = await context.Branches
+                                      .Where(b => b.BrandId == brandId)
+                                      .Select(b => new BranchDTO
+                                      {
+                                          Id = b.Id,
+                                          Name = b.Name
+                                      })
+                                      .FirstOrDefaultAsync();
+            return branch;
         }
 
     }

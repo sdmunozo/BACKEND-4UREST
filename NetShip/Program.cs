@@ -47,6 +47,7 @@ builder.Services.AddScoped<IProductsRepository, ProductsRepository>();
 
 builder.Services.AddScoped<IBrandsRepository, BrandsRepository>();
 builder.Services.AddScoped<IBranchesRepository, BranchesRepository>();
+builder.Services.AddScoped<ICatalogsRepository, CatalogsRepository>();
 
 builder.Services.AddScoped<IFileStorage, FileLocalStorage>();
 builder.Services.AddTransient<IUserServices, UserServices>();
@@ -74,7 +75,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddCors(options => options.AddDefaultPolicy(
     builder =>
     {
-        builder.WithOrigins("http://localhost:60496")
+        builder.AllowAnyOrigin()//WithOrigins("http://localhost:64048", "http://localhost:52476")
                .AllowAnyHeader()
                .AllowAnyMethod();
     }));
@@ -96,6 +97,8 @@ app.UseAuthorization();
 app.MapGroup("/category").MapCategories();
 app.MapGroup("/product").MapProducts();
 app.MapGroup("/users").MapUsers();
+app.MapGroup("/catalogs").MapCatalogs();
+app.MapGroup("/branches").MapBranches();
 
 
 

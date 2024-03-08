@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using NetShip.DTOs.Auth;
+using NetShip.DTOs.Branch;
+using NetShip.DTOs.Brand;
 using NetShip.Entities;
 using NetShip.Filters;
 using NetShip.Repositories;
@@ -75,9 +77,12 @@ namespace NetShip.Endpoints
                     logger.LogInformation($"{claim.Type}: {claim.Value}");
                 }
 
+                var brandsList = new List<BrandDDLDTO>
+                {
+                    new BrandDDLDTO { Id = brandId, Name = registerNewUserAccountDTO.BrandName }
+                };
 
-                //var responseCredentials = buildToken(userClaims, configuration);
-                var responseCredentials = buildToken(userClaims, user, configuration);
+                var responseCredentials = await buildToken(userClaims, user, configuration, brandsRepository, branchesRepository);
 
                 return TypedResults.Ok(responseCredentials);
             }
@@ -89,7 +94,7 @@ namespace NetShip.Endpoints
 
         static async Task<Results<Ok<AuthenticationResponseDTO>, BadRequest<string>>> Login(
             LoginRequestDTO loginRequestDTO, [FromServices] SignInManager<ApplicationUser> signInManager,
-            [FromServices] UserManager<ApplicationUser> userManager, IConfiguration configuration, ILoggerFactory loggerFactory)
+            [FromServices] UserManager<ApplicationUser> userManager, IConfiguration configuration, ILoggerFactory loggerFactory, IBrandsRepository brandsRepository, IBranchesRepository branchesRepository)
         {
             var type = typeof(EndpointsUsers);
             var logger = loggerFactory.CreateLogger(type.FullName!);
@@ -119,9 +124,13 @@ namespace NetShip.Endpoints
                 }
 
 
-                var authResult = buildToken(claims, user, configuration);
+                var userBrands = await brandsRepository.GetBrandsByUserId(user.Id);
+                var brandsList = userBrands.Select(b => new BrandDDLDTO { Id = b.Id, Name = b.Name }).ToList();
+
+                var authResult = await buildToken(claims, user, configuration, brandsRepository, branchesRepository);
 
                 return TypedResults.Ok(authResult);
+
             }
             else
             {
@@ -129,7 +138,7 @@ namespace NetShip.Endpoints
             }
         }
 
-        static async Task<IResult> AuthenticateToken(HttpRequest request, [FromServices] IConfiguration configuration, ILoggerFactory loggerFactory)
+        static async Task<IResult> AuthenticateToken(HttpRequest request, [FromServices] IConfiguration configuration, ILoggerFactory loggerFactory, IBrandsRepository brandsRepository, IBranchesRepository branchesRepository)
         {
             var type = typeof(EndpointsUsers);
             var logger = loggerFactory.CreateLogger(type.FullName!);
@@ -139,7 +148,6 @@ namespace NetShip.Endpoints
                 var token = authHeader.ToString().Split(" ").Last();
                 if (ValidateToken(token, configuration, out var tokenClaims))
                 {
-                    // Usa los tipos de claims estándar de .NET
                     var userIdClaim = tokenClaims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
                     var firstNameClaim = tokenClaims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName);
                     var lastNameClaim = tokenClaims.FirstOrDefault(c => c.Type == ClaimTypes.Surname);
@@ -158,7 +166,11 @@ namespace NetShip.Endpoints
                         Email = emailClaim.Value,
                     };
 
-                    var authResponse = buildToken(new List<Claim> { userIdClaim, firstNameClaim, lastNameClaim, emailClaim }, user, configuration);
+                    var userBrands = await brandsRepository.GetBrandsByUserId(user.Id);
+                    var brandsList = userBrands.Select(b => new BrandDDLDTO { Id = b.Id, Name = b.Name }).ToList();
+
+                    var authResponse = await buildToken(new List<Claim> { userIdClaim, firstNameClaim, lastNameClaim, emailClaim }, user, configuration, brandsRepository, branchesRepository);
+
                     return Results.Ok(authResponse);
                 }
                 else
@@ -181,7 +193,6 @@ namespace NetShip.Endpoints
                 IssuerSigningKey = Keys.GetKey(configuration).First(),
                 ValidateIssuer = false,
                 ValidateAudience = false,
-                // Aquí puedes añadir más validaciones según sea necesario
             };
 
             try
@@ -196,7 +207,8 @@ namespace NetShip.Endpoints
             }
         }
 
-        private static AuthenticationResponseDTO buildToken(List<Claim> claims, ApplicationUser user, IConfiguration configuration)
+
+        private static async Task<AuthenticationResponseDTO> buildToken(List<Claim> claims, ApplicationUser user, IConfiguration configuration, IBrandsRepository brandsRepository, IBranchesRepository branchesRepository)
         {
             var key = Keys.GetKey(configuration);
             var creds = new SigningCredentials(key.First(), SecurityAlgorithms.HmacSha256);
@@ -206,7 +218,9 @@ namespace NetShip.Endpoints
 
             var token = new JwtSecurityTokenHandler().WriteToken(securityToken);
 
-            // Crear el UserResponseDTO basado en la información del ApplicationUser
+            var brand = await brandsRepository.GetFirstBrandByUserId(user.Id);
+            var branch = brand != null ? await branchesRepository.GetFirstByBrandId(brand.Id) : null;
+
             var userResponse = new UserResponseDTO
             {
                 UserId = user.Id,
@@ -215,13 +229,46 @@ namespace NetShip.Endpoints
                 UserEmail = user.Email,
             };
 
-            // Incluir UserResponseDTO en AuthenticationResponseDTO
             return new AuthenticationResponseDTO
             {
                 Token = token,
                 Expiration = expiration,
-                User = userResponse
+                User = userResponse,
+                Brand = brand, 
+                Branch = branch
             };
         }
+
+        /*
+        private static AuthenticationResponseDTO buildToken(List<Claim> claims, ApplicationUser user, IConfiguration configuration, IBrandsRepository brandsRepository, IBranchesRepository branchesRepository)
+        {
+            var key = Keys.GetKey(configuration);
+            var creds = new SigningCredentials(key.First(), SecurityAlgorithms.HmacSha256);
+            var expiration = DateTime.UtcNow.AddDays(30);
+
+            var securityToken = new JwtSecurityToken(issuer: null, audience: null, claims: claims, expires: expiration, signingCredentials: creds);
+
+            var token = new JwtSecurityTokenHandler().WriteToken(securityToken);
+
+            var userResponse = new UserResponseDTO
+            {
+                UserId = user.Id,
+                UserFirstName = user.FirstName,
+                UserLastName = user.LastName,
+                UserEmail = user.Email,
+            };
+
+            return new AuthenticationResponseDTO
+            {
+                Token = token,
+                Expiration = expiration,
+                User = userResponse,
+                Brands = brands
+            };
+        } 
+
+        */
+
+
     }
 }

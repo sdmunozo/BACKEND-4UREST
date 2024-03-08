@@ -40,5 +40,7 @@ namespace NetShip
 
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Branch> Branches { get; set; }
+
+        public DbSet<Catalog> Catalogs { get; set; }
     }
 }

@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NetShip.Migrations
 {
     /// <inheritdoc />
-    public partial class DatabaseUpdated : Migration
+    public partial class InitDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -260,6 +260,32 @@ namespace NetShip.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Catalogs",
+                schema: "MasterBase",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    IsScheduleActive = table.Column<bool>(type: "boolean", nullable: false),
+                    Sort = table.Column<int>(type: "integer", nullable: false),
+                    BranchId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Icon = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Catalogs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Catalogs_Branches_BranchId",
+                        column: x => x.BranchId,
+                        principalSchema: "MasterBase",
+                        principalTable: "Branches",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Branches_BrandId",
                 schema: "MasterBase",
@@ -278,6 +304,12 @@ namespace NetShip.Migrations
                 table: "Brands",
                 column: "UserId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Catalogs_BranchId",
+                schema: "MasterBase",
+                table: "Catalogs",
+                column: "BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",
@@ -328,7 +360,7 @@ namespace NetShip.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Branches",
+                name: "Catalogs",
                 schema: "MasterBase");
 
             migrationBuilder.DropTable(
@@ -360,11 +392,15 @@ namespace NetShip.Migrations
                 schema: "MasterBase");
 
             migrationBuilder.DropTable(
-                name: "Brands",
+                name: "Branches",
                 schema: "MasterBase");
 
             migrationBuilder.DropTable(
                 name: "Roles",
+                schema: "MasterBase");
+
+            migrationBuilder.DropTable(
+                name: "Brands",
                 schema: "MasterBase");
 
             migrationBuilder.DropTable(
