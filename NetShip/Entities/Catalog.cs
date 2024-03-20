@@ -10,5 +10,8 @@
         public int Sort { get; set; } = -1;
         public Guid BranchId { get; set; }
         public string? Icon { get; set; }
+        public List<Category> Categories { get; set; } = new List<Category>();
+
+        public Branch Branch { get; set; }
     }
 }

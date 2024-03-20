@@ -36,7 +36,7 @@ namespace NetShip.Repositories
 
         public async Task<Category?> GetById(Guid id)
         {
-            return await context.Categories.FirstOrDefaultAsync( x => x.Id == id);
+            return await context.Categories.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task Update(Category category)

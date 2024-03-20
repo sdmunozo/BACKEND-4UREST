@@ -33,6 +33,10 @@ namespace NetShip
                         .WithOne()
                         .HasForeignKey<Brand>("UserId");
 
+
+            modelBuilder.Entity<PricePerModifierPerPlatform>().HasKey(p => new { p.PlatformId, p.ModifierId});
+            modelBuilder.Entity<PricePerItemPerPlatform>().HasKey(p => new { p.PlatformId, p.ItemId });
+
         }
 
         public DbSet<Category> Categories { get; set; }
@@ -40,7 +44,14 @@ namespace NetShip
 
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Branch> Branches { get; set; }
-
         public DbSet<Catalog> Catalogs { get; set; }
+        public DbSet<Item> Items { get; set; }
+
+        public DbSet<Platform> Platforms { get; set; }
+        public DbSet<ModifiersGroup> ModifiersGroups { get; set; }
+        public DbSet<Modifier> Modifiers { get; set; }
+
+        public DbSet<PricePerModifierPerPlatform> PricePerModifierPerPlatforms { get; set; }
+        public DbSet<PricePerItemPerPlatform> PricePerItemPerPlatforms { get; set; }
     }
 }

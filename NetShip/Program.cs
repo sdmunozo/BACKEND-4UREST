@@ -48,10 +48,21 @@ builder.Services.AddScoped<IProductsRepository, ProductsRepository>();
 builder.Services.AddScoped<IBrandsRepository, BrandsRepository>();
 builder.Services.AddScoped<IBranchesRepository, BranchesRepository>();
 builder.Services.AddScoped<ICatalogsRepository, CatalogsRepository>();
+builder.Services.AddScoped<IItemsRepository, ItemsRepository>();
+
+builder.Services.AddScoped<IPlatformsRepository, PlatformsRepository>();
+builder.Services.AddScoped<IModifiersGroupsRepository, ModifiersGroupsRepository>();
+builder.Services.AddScoped<IModifiersRepository, ModifiersRepository>();
+
+
+
+
+builder.Services.AddScoped<QrCodeService>();
 
 builder.Services.AddScoped<IFileStorage, FileLocalStorage>();
 builder.Services.AddTransient<IUserServices, UserServices>();
 builder.Services.AddHttpContextAccessor();
+
 
 
 
@@ -94,11 +105,17 @@ app.UseOutputCache();
 
 app.UseAuthorization();
 
-app.MapGroup("/category").MapCategories();
-app.MapGroup("/product").MapProducts();
-app.MapGroup("/users").MapUsers();
-app.MapGroup("/catalogs").MapCatalogs();
-app.MapGroup("/branches").MapBranches();
+app.MapGroup("/api/category").MapCategories();
+app.MapGroup("/api/product").MapProducts();
+app.MapGroup("/api/user").MapUsers();
+app.MapGroup("/api/catalog").MapCatalogs();
+app.MapGroup("/api/brand").MapBrands();
+app.MapGroup("/api/branch").MapBranches();
+app.MapGroup("/api/item").MapItems();
+app.MapGroup("/api/platform").MapPlatforms();
+app.MapGroup("/api/modifiersGroup").MapModifiersGroups();
+app.MapGroup("/api/modifier").MapModifiers();
+app.MapGroup("/api/digital-menu").MapDigitalMenu();
 
 
 

@@ -243,7 +243,20 @@ namespace NetShip.Migrations
                     b.Property<Guid>("BrandId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("DigitalMenuLink")
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("NormalizedDigitalMenu")
+                        .HasColumnType("text");
+
+                    b.Property<string>("QrCodePath")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UrlNormalizedName")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -263,12 +276,32 @@ namespace NetShip.Migrations
                     b.Property<string>("ApplicationUserId")
                         .HasColumnType("text");
 
+                    b.Property<string>("CatalogsBackground")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Facebook")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Instagram")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Logo")
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
-                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Slogan")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UrlNormalizedName")
                         .HasColumnType("text");
 
                     b.Property<string>("UserId")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Website")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -323,24 +356,239 @@ namespace NetShip.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("CatalogId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
                     b.Property<string>("Icon")
                         .IsUnicode(true)
                         .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsScheduleActive")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("ParentId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Sort")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CatalogId");
+
                     b.ToTable("Categories", "MasterBase");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.Item", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Alias")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Icon")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsScheduleActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Sort")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("Items", "MasterBase");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.Modifier", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Alias")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Icon")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsScheduleActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("MaxModifier")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MinModifier")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("ModifiersGroupId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Sort")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ModifiersGroupId");
+
+                    b.ToTable("Modifiers", "MasterBase");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.ModifiersGroup", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Alias")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Icon")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsScheduleActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("MaxModifiers")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MinModifiers")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Sort")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ModifiersGroups", "MasterBase");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.Platform", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Alias")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("BrandId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Icon")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsScheduleActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Sort")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BrandId");
+
+                    b.ToTable("Platforms", "MasterBase");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.PricePerItemPerPlatform", b =>
+                {
+                    b.Property<Guid>("PlatformId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<double?>("Price")
+                        .HasColumnType("double precision");
+
+                    b.HasKey("PlatformId", "ItemId");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("PricePerItemPerPlatforms", "MasterBase");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.PricePerModifierPerPlatform", b =>
+                {
+                    b.Property<Guid>("PlatformId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ModifierId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<double?>("Price")
+                        .HasColumnType("double precision");
+
+                    b.HasKey("PlatformId", "ModifierId");
+
+                    b.HasIndex("ModifierId");
+
+                    b.ToTable("PricePerModifierPerPlatforms", "MasterBase");
                 });
 
             modelBuilder.Entity("NetShip.Entities.Product", b =>
@@ -350,25 +598,33 @@ namespace NetShip.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Alias")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
                     b.Property<string>("Icon")
                         .IsUnicode(true)
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsScheduleActive")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Sort")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("Products", "MasterBase");
                 });
@@ -426,11 +682,13 @@ namespace NetShip.Migrations
 
             modelBuilder.Entity("NetShip.Entities.Branch", b =>
                 {
-                    b.HasOne("NetShip.Entities.Brand", null)
+                    b.HasOne("NetShip.Entities.Brand", "Brand")
                         .WithMany("Branches")
                         .HasForeignKey("BrandId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Brand");
                 });
 
             modelBuilder.Entity("NetShip.Entities.Brand", b =>
@@ -450,11 +708,117 @@ namespace NetShip.Migrations
 
             modelBuilder.Entity("NetShip.Entities.Catalog", b =>
                 {
-                    b.HasOne("NetShip.Entities.Branch", null)
+                    b.HasOne("NetShip.Entities.Branch", "Branch")
                         .WithMany("Catalogs")
                         .HasForeignKey("BranchId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Branch");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.Category", b =>
+                {
+                    b.HasOne("NetShip.Entities.Catalog", "Catalog")
+                        .WithMany("Categories")
+                        .HasForeignKey("CatalogId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Catalog");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.Item", b =>
+                {
+                    b.HasOne("NetShip.Entities.Category", "Category")
+                        .WithMany("Items")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.Modifier", b =>
+                {
+                    b.HasOne("NetShip.Entities.ModifiersGroup", "ModifiersGroup")
+                        .WithMany("Modifiers")
+                        .HasForeignKey("ModifiersGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ModifiersGroup");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.ModifiersGroup", b =>
+                {
+                    b.HasOne("NetShip.Entities.Product", "Product")
+                        .WithMany("ModifiersGroups")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.Platform", b =>
+                {
+                    b.HasOne("NetShip.Entities.Brand", "Brand")
+                        .WithMany("Platforms")
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Brand");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.PricePerItemPerPlatform", b =>
+                {
+                    b.HasOne("NetShip.Entities.Item", "Item")
+                        .WithMany("PricePerItemPerPlatforms")
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NetShip.Entities.Platform", "Platform")
+                        .WithMany("PricePerItemPerPlatforms")
+                        .HasForeignKey("PlatformId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
+
+                    b.Navigation("Platform");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.PricePerModifierPerPlatform", b =>
+                {
+                    b.HasOne("NetShip.Entities.Modifier", "Modifier")
+                        .WithMany("PricePerModifierPerPlatforms")
+                        .HasForeignKey("ModifierId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NetShip.Entities.Platform", "Platform")
+                        .WithMany("PricePerModifierPerPlatforms")
+                        .HasForeignKey("PlatformId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Modifier");
+
+                    b.Navigation("Platform");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.Product", b =>
+                {
+                    b.HasOne("NetShip.Entities.Category", "Category")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("NetShip.Entities.ApplicationUser", b =>
@@ -470,6 +834,47 @@ namespace NetShip.Migrations
             modelBuilder.Entity("NetShip.Entities.Brand", b =>
                 {
                     b.Navigation("Branches");
+
+                    b.Navigation("Platforms");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.Catalog", b =>
+                {
+                    b.Navigation("Categories");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.Category", b =>
+                {
+                    b.Navigation("Items");
+
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.Item", b =>
+                {
+                    b.Navigation("PricePerItemPerPlatforms");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.Modifier", b =>
+                {
+                    b.Navigation("PricePerModifierPerPlatforms");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.ModifiersGroup", b =>
+                {
+                    b.Navigation("Modifiers");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.Platform", b =>
+                {
+                    b.Navigation("PricePerItemPerPlatforms");
+
+                    b.Navigation("PricePerModifierPerPlatforms");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.Product", b =>
+                {
+                    b.Navigation("ModifiersGroups");
                 });
 #pragma warning restore 612, 618
         }

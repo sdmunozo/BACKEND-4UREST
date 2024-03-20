@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
 using NetShip.DTOs.Branch;
 using NetShip.Repositories;
+using NetShip.Services;
 using System;
 
 namespace NetShip.Endpoints
@@ -17,6 +18,12 @@ namespace NetShip.Endpoints
                 .WithName("GetBranchesByBrandId")
                 .Produces<List<BranchDTO>>(StatusCodes.Status200OK)
                 .RequireAuthorization();
+
+            group.MapPost("/generateBranchLink/{branchId:Guid}", generateBranchLink)
+                .WithName("GenerateBranchLink")
+                .Produces(StatusCodes.Status200OK)
+                .Produces(StatusCodes.Status404NotFound);
+            //.RequireAuthorization(); // Asegura que solo usuarios autorizados puedan acceder
 
             return group;
         }
@@ -32,6 +39,41 @@ namespace NetShip.Endpoints
             var branchDTOs = mapper.Map<List<BranchDTO>>(branches);
             return TypedResults.Ok(branchDTOs);
         }
+
+        private static async Task<IResult> generateBranchLink(Guid branchId, IBranchesRepository branchesRepository, IBrandsRepository brandsRepository, QrCodeService qrCodeService, HttpContext httpContext)
+        {
+
+            var branch = await branchesRepository.GetById(branchId);
+            if (branch == null)
+            {
+                return TypedResults.NotFound();
+            }
+
+
+            var brand = await brandsRepository.GetById(branch.BrandId);
+            if (brand == null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            var domain = "https://4urest.com/";
+            var digitalMenuLink = $"{domain}{brand.UrlNormalizedName}-{branch.UrlNormalizedName}";
+            var normalizedDigitalMenu = $"{brand.UrlNormalizedName}-{branch.UrlNormalizedName}";
+
+            branch.DigitalMenuLink = digitalMenuLink;
+            branch.NormalizedDigitalMenu = normalizedDigitalMenu;
+
+            var qrCodePath = qrCodeService.GenerateQrCode(digitalMenuLink, $"wwwroot/qrcodes/{branchId}.png");
+
+            branch.QrCodePath = qrCodePath;
+
+            await branchesRepository.Update(branch);
+
+            return TypedResults.Ok(new { branch.DigitalMenuLink, branch.QrCodePath });
+        }
+
+
+
 
     }
 }

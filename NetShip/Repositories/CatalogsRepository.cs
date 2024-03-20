@@ -16,6 +16,32 @@ namespace NetShip.Repositories
             _context = context;
         }
 
+        public async Task<Catalog> CreateCatalog(Catalog catalog)
+        {
+            _context.Add(catalog);
+            await _context.SaveChangesAsync();
+            return catalog; 
+        }
+
+
+
+        public async Task DeleteCatalog(Guid id)
+        {
+            var catalog = await _context.Catalogs.FirstOrDefaultAsync(x => x.Id == id);
+            if (catalog != null)
+            {
+                _context.Catalogs.Remove(catalog);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+
+        public async Task<Catalog?> GetById(Guid id)
+        {
+            return await _context.Catalogs.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+
         public async Task<ListOfCatalogsDTO> GetCatalogsByBranchId(Guid branchId)
         {
             var catalogs = await _context.Catalogs
@@ -42,32 +68,11 @@ namespace NetShip.Repositories
             return result;
         }
 
-        public async Task<Catalog> CreateCatalog(Catalog catalog)
-        {
-            _context.Catalogs.Add(catalog);
-            await _context.SaveChangesAsync();
-            return catalog;
-        }
-
         public async Task UpdateCatalog(Catalog catalog)
         {
-            _context.Catalogs.Update(catalog);
+            _context.Update(catalog);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Catalog?> GetById(Guid id)
-        {
-            return await _context.Catalogs.FindAsync(id);
-        }
-
-        public async Task DeleteCatalog(Guid id)
-        {
-            var catalog = await _context.Catalogs.FindAsync(id);
-            if (catalog != null)
-            {
-                _context.Catalogs.Remove(catalog);
-                await _context.SaveChangesAsync();
-            }
-        }
     }
 }

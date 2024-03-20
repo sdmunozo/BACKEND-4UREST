@@ -5,6 +5,7 @@ using NetShip.Entities;
 using NetShip.Repositories;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.OutputCaching;
+using NetShip.Services;
 
 namespace NetShip.Endpoints
 {
@@ -14,20 +15,20 @@ namespace NetShip.Endpoints
 
         public static RouteGroupBuilder MapCatalogs(this RouteGroupBuilder group)
         {
-            group.MapGet("/catalogs/{branchId:guid}", getCatalogsByBranch)
+            group.MapGet("/getAll/{branchId:guid}", getCatalogsByBranch)
                  .WithName("GetCatalogsByBranch")
                  .Produces<ListOfCatalogsDTO>(StatusCodes.Status200OK)
                  .Produces(StatusCodes.Status404NotFound).RequireAuthorization();
 
-            group.MapPost("/catalogs", createCatalog)
+            group.MapPost("/create", createCatalog)
                  .DisableAntiforgery()
                  .WithName("CreateCatalog");
 
-            group.MapPut("/catalogs/{id:guid}", updateCatalog)
+            group.MapPut("/update/{id:guid}", updateCatalog)
                  .DisableAntiforgery()
                  .WithName("UpdateCatalog");
 
-            group.MapDelete("/catalogs/{id:guid}", deleteCatalog)
+            group.MapDelete("/detele/{id:guid}", deleteCatalog)
                  .WithName("DeleteCatalog");
 
             return group;
@@ -44,9 +45,16 @@ namespace NetShip.Endpoints
             return Results.Ok(catalogsDTO);
         }
 
-        static async Task<IResult> createCatalog([FromBody] CreateCatalogDTO createCatalogDTO, ICatalogsRepository catalogsRepository, IMapper mapper, IOutputCacheStore outputCacheStore)
+        static async Task<IResult> createCatalog([FromForm] CreateCatalogDTO createCatalogDTO, ICatalogsRepository catalogsRepository, IMapper mapper, IFileStorage fileStorage, IOutputCacheStore outputCacheStore)
         {
             var catalog = mapper.Map<Catalog>(createCatalogDTO);
+
+            if (createCatalogDTO.Icon is not null)
+            {
+                var iconUrl = await fileStorage.Upload(container, createCatalogDTO.Icon);
+                catalog.Icon = iconUrl;
+            }
+
             await catalogsRepository.CreateCatalog(catalog);
             await outputCacheStore.EvictByTagAsync("get-catalogs", default);
 
@@ -54,7 +62,8 @@ namespace NetShip.Endpoints
             return Results.Created($"/catalogs/{catalog.Id}", catalogDTO);
         }
 
-        static async Task<IResult> updateCatalog(Guid id, [FromBody] UpdateCatalogDTO updateCatalogDTO, ICatalogsRepository catalogsRepository, IMapper mapper, IOutputCacheStore outputCacheStore)
+
+        static async Task<IResult> updateCatalog(Guid id, [FromForm] UpdateCatalogDTO updateCatalogDTO, ICatalogsRepository catalogsRepository, IMapper mapper, IFileStorage fileStorage, IOutputCacheStore outputCacheStore)
         {
             var existingCatalog = await catalogsRepository.GetById(id);
             if (existingCatalog == null)
@@ -63,11 +72,19 @@ namespace NetShip.Endpoints
             }
 
             mapper.Map(updateCatalogDTO, existingCatalog);
+
+            if (updateCatalogDTO.Icon is not null)
+            {
+                var iconUrl = await fileStorage.Edit(existingCatalog.Icon, container, updateCatalogDTO.Icon);
+                existingCatalog.Icon = iconUrl;
+            }
+
             await catalogsRepository.UpdateCatalog(existingCatalog);
             await outputCacheStore.EvictByTagAsync("get-catalogs", default);
 
             return Results.NoContent();
         }
+
 
         static async Task<IResult> deleteCatalog(Guid id, ICatalogsRepository catalogsRepository, IOutputCacheStore outputCacheStore)
         {

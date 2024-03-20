@@ -24,13 +24,21 @@ namespace NetShip.Repositories
                                 .ToListAsync();
         }
 
-
         public async Task<Guid> Create(Brand brand)
         {
+            string normalizedName = StringUtils.NormalizeUrlName(brand.Name);
+            int suffix = 1;
+            while (await context.Brands.AnyAsync(b => b.UrlNormalizedName == normalizedName))
+            {
+                normalizedName = $"{StringUtils.NormalizeUrlName(brand.Name)}-{suffix++}";
+            }
+            brand.UrlNormalizedName = normalizedName;
+            
             context.Add(brand);
             await context.SaveChangesAsync();
             return brand.Id;
         }
+
 
         public async Task<bool> Exist(Guid id)
         {

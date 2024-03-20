@@ -18,7 +18,8 @@ namespace NetShip.Endpoints
 {
     public static class EndpointsUsers
     {
-        public static RouteGroupBuilder MapUsers(this RouteGroupBuilder group) {
+        public static RouteGroupBuilder MapUsers(this RouteGroupBuilder group)
+        {
             group.MapPost("/register", Register).AddEndpointFilter<ValidationsFilter<RegisterNewUserAccountDTO>>();
             group.MapPost("/login", Login).AddEndpointFilter<ValidationsFilter<LoginRequestDTO>>();
             group.MapPost("/auth", AuthenticateToken).Produces<AuthenticationResponseDTO>(StatusCodes.Status200OK).Produces(StatusCodes.Status401Unauthorized);
@@ -30,6 +31,7 @@ namespace NetShip.Endpoints
     [FromServices] UserManager<ApplicationUser> userManager,
     [FromServices] IBrandsRepository brandsRepository,
     [FromServices] IBranchesRepository branchesRepository,
+    [FromServices] IPlatformsRepository platformsRepository,
     IConfiguration configuration, ILoggerFactory loggerFactory)
         {
 
@@ -63,6 +65,18 @@ namespace NetShip.Endpoints
                 };
 
                 var branchId = await branchesRepository.Create(branch);
+
+                var platform = new Platform
+                {
+                    BrandId = brandId,
+                    Name = "Base",
+                    Alias = "Base",
+                    IsActive = true,
+                    IsScheduleActive = false,
+                    Sort = -1,
+                };
+
+                await platformsRepository.Create(platform);
 
                 var userClaims = new List<Claim>
                 {
@@ -234,41 +248,10 @@ namespace NetShip.Endpoints
                 Token = token,
                 Expiration = expiration,
                 User = userResponse,
-                Brand = brand, 
+                Brand = brand,
                 Branch = branch
             };
         }
-
-        /*
-        private static AuthenticationResponseDTO buildToken(List<Claim> claims, ApplicationUser user, IConfiguration configuration, IBrandsRepository brandsRepository, IBranchesRepository branchesRepository)
-        {
-            var key = Keys.GetKey(configuration);
-            var creds = new SigningCredentials(key.First(), SecurityAlgorithms.HmacSha256);
-            var expiration = DateTime.UtcNow.AddDays(30);
-
-            var securityToken = new JwtSecurityToken(issuer: null, audience: null, claims: claims, expires: expiration, signingCredentials: creds);
-
-            var token = new JwtSecurityTokenHandler().WriteToken(securityToken);
-
-            var userResponse = new UserResponseDTO
-            {
-                UserId = user.Id,
-                UserFirstName = user.FirstName,
-                UserLastName = user.LastName,
-                UserEmail = user.Email,
-            };
-
-            return new AuthenticationResponseDTO
-            {
-                Token = token,
-                Expiration = expiration,
-                User = userResponse,
-                Brands = brands
-            };
-        } 
-
-        */
-
 
     }
 }

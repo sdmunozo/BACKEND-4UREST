@@ -122,3 +122,4 @@ C:\Users\USER\Desktop\dev\BACKEND\NetShip\NetShip\bin\Debug\net8.0\Microsoft.Ext
 C:\Users\USER\Desktop\dev\BACKEND\NetShip\NetShip\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
 C:\Users\USER\Desktop\dev\BACKEND\NetShip\NetShip\bin\Debug\net8.0\FluentValidation.dll
 C:\Users\USER\Desktop\dev\BACKEND\NetShip\NetShip\bin\Debug\net8.0\FluentValidation.DependencyInjectionExtensions.dll
+C:\Users\USER\Desktop\dev\BACKEND\NetShip\NetShip\bin\Debug\net8.0\QRCoder.dll

@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
-using NetShip.DTOs.Common;
 using NetShip.DTOs.Product;
+using NetShip.DTOs.Common;
 using NetShip.Entities;
 using NetShip.Repositories;
 using NetShip.Services;
@@ -16,20 +16,35 @@ namespace NetShip.Endpoints
 
         public static RouteGroupBuilder MapProducts(this RouteGroupBuilder group)
         {
-            group.MapGet("/", getProducts).CacheOutput(c => c.Expire(TimeSpan.FromDays(30)).Tag("get-products"));
-            group.MapGet("/{id:Guid}", getProduct);
-            group.MapPost("/", createProduct).DisableAntiforgery();
-            group.MapPut("/{id:Guid}", updateProduct).DisableAntiforgery();
-            group.MapDelete("/{id:Guid}", deleteProduct); 
-            group.MapDelete("softDelete/{id:Guid}", softDeleteProduct);
-            group.MapGet("getByName/{name}", getProductByName);
+
+            group.MapPost("/create", createProduct).WithName("CreateProduct").DisableAntiforgery()
+                .RequireAuthorization();
+
+            group.MapPut("/update/{productId:Guid}", updateProduct).WithName("UpdateProduct").DisableAntiforgery()
+                .RequireAuthorization();
+
+            group.MapGet("/getAll", getAllProducts).WithName("GetAllProducts")
+                .CacheOutput(c => c.Expire(TimeSpan.FromDays(30)).Tag("get-products"))
+                .RequireAuthorization();
+
+            group.MapGet("/getById/{productId:Guid}", getProductById).WithName("GetProductById")
+                .RequireAuthorization();
+
+            group.MapDelete("/delete/{productId:Guid}", deleteProduct).WithName("DeleteProduct")
+                .RequireAuthorization();
+
+            group.MapGet("getByName/{productName}", getProductByName).WithName("GetProductByName")
+                .RequireAuthorization();
 
             return group;
         }
 
-        static async Task<Created<ProductDTO>> createProduct([FromForm] CreateProductDTO createProductDTO,
-            IProductsRepository repository, IOutputCacheStore outputCacheStore,
-            IMapper mapper, IFileStorage fileStorage)
+        static async Task<Results<NoContent, NotFound>> createProduct(
+                     [FromForm] CrProductReqDTO createProductDTO,
+                     IProductsRepository repository,
+                     IOutputCacheStore outputCacheStore,
+                     IMapper mapper,
+                     IFileStorage fileStorage)
         {
             var product = mapper.Map<Product>(createProductDTO);
 
@@ -39,17 +54,47 @@ namespace NetShip.Endpoints
                 product.Icon = url;
             }
 
-            var id = await repository.Create(product);
+            await repository.Create(product);
             await outputCacheStore.EvictByTagAsync("get-products", default);
 
-            var productDTO = mapper.Map<ProductDTO>(product);
-
-            return TypedResults.Created($"/product/{id}", productDTO);
+            return TypedResults.NoContent();
         }
 
-        static async Task<Results<Ok<ProductDTO>, NotFound>> getProduct(IProductsRepository repository, Guid id, IMapper mapper)
+
+        static async Task<Results<NoContent, NotFound>> updateProduct(
+            Guid productId,
+            [FromForm] UpProductReqDTO updateProductDTO,
+            IProductsRepository repository,
+            IMapper mapper,
+            IFileStorage fileStorage,
+            IOutputCacheStore outputCacheStore)
         {
-            var product = await repository.GetById(id);
+            var productToUpdate = await repository.GetById(productId);
+
+            if (productToUpdate is null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            mapper.Map(updateProductDTO, productToUpdate);
+
+            if (updateProductDTO.Icon is not null)
+            {
+                var iconUrl = await fileStorage.Edit(productToUpdate.Icon, container, updateProductDTO.Icon);
+                productToUpdate.Icon = iconUrl;
+            }
+
+            await repository.Update(productToUpdate);
+            await outputCacheStore.EvictByTagAsync("get-products", default);
+
+            return TypedResults.NoContent();
+        }
+
+
+
+        static async Task<Results<Ok<ProductDTO>, NotFound>> getProductById(IProductsRepository repository, Guid productId, IMapper mapper)
+        {
+            var product = await repository.GetById(productId);
 
             if (product == null)
                 return TypedResults.NotFound();
@@ -59,17 +104,18 @@ namespace NetShip.Endpoints
             return TypedResults.Ok(productDTO);
         }
 
-        static async Task<Ok<List<ProductDTO>>> getProducts(IProductsRepository repository, IMapper mapper, int page, int recordsPerPage)
+        static async Task<Ok<List<ProductDTO>>> getAllProducts(IProductsRepository repository, IMapper mapper, int page, int recordsPerPage)
         {
-            var pagination = new PaginationDTO { Page = page , RecordsPerPage = recordsPerPage};
+            var pagination = new PaginationDTO { Page = page, RecordsPerPage = recordsPerPage };
             var products = await repository.GetAll(pagination);
             var productDTO = mapper.Map<List<ProductDTO>>(products);
             return TypedResults.Ok(productDTO);
+
         }
 
-        static async Task<Ok<List<ProductDTO>>> getProductByName(string name, IProductsRepository repository, IMapper mapper)
+        static async Task<Ok<List<ProductDTO>>> getProductByName(string productName, IProductsRepository repository, IMapper mapper)
         {
-            var products = await repository.GetByName(name);
+            var products = await repository.GetByName(productName);
 
             var productDTO = mapper.Map<List<ProductDTO>>(products);
 
@@ -77,75 +123,25 @@ namespace NetShip.Endpoints
 
         }
 
-        static async Task<Results<NoContent, NotFound>> updateProduct(
-            Guid id,
-            [FromForm] CreateProductDTO createProductDTO,
+        static async Task<Results<NoContent, NotFound>> deleteProduct(
+            Guid productId,
             IProductsRepository repository,
             IFileStorage fileStorage,
-            IOutputCacheStore outputCacheStore,
-            IMapper mapper)
+            IOutputCacheStore outputCacheStore)
         {
-            // Obtén la entidad existente del contexto sin crear una nueva instancia.
-            var registerToUpdate = await repository.GetById(id);
 
-            if (registerToUpdate is null)
+            var regDB = await repository.GetById(productId);
+
+            if (regDB is null)
             {
                 return TypedResults.NotFound();
             }
 
-            // Actualiza las propiedades de la entidad con los valores del DTO.
-            mapper.Map(createProductDTO, registerToUpdate);
-
-            if (createProductDTO.Icon is not null)
-            {
-                var url = await fileStorage.Edit(registerToUpdate.Icon, container, createProductDTO.Icon);
-                registerToUpdate.Icon = url;
-            }
-
-            // Marca la entidad como modificada en el contexto.
-            await repository.Update(registerToUpdate);
-
-            await outputCacheStore.EvictByTagAsync("get-products", default);
-            return TypedResults.NoContent();
-        }
-
-
-        static async Task<Results<NoContent, NotFound>> softDeleteProduct(Guid id, IProductsRepository repository, IOutputCacheStore outputCacheStore)
-        {
-            var product = await repository.GetById(id);
-
-            if (product == null)
-                return TypedResults.NotFound();
-
-            product.Status = "Eliminado";
-
-            await repository.Update(product);
-            await outputCacheStore.EvictByTagAsync("get-products", default);
-
-            return TypedResults.NoContent();
-        }
-
-
-        static async Task<Results<NoContent, NotFound>> deleteProduct(
-                    Guid id,
-                    IProductsRepository repository,
-                    IFileStorage fileStorage,
-                    IOutputCacheStore outputCacheStore)
-        {
-
-            var regDB = await repository.GetById(id);
-
-            if(regDB is null)
-            {
-                return TypedResults.NotFound();
-            }
-
-            await repository.Delete(id);
+            await repository.Delete(productId);
             await fileStorage.Delete(regDB.Icon, container);
             await outputCacheStore.EvictByTagAsync("get-products", default);
             return TypedResults.NoContent();
         }
-
     }
-
 }
+
