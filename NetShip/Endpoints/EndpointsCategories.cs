@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
 using NetShip.DTOs.Category;
 using NetShip.DTOs.Common;
+using NetShip.DTOs.DigitalMenu;
 using NetShip.Entities;
 using NetShip.Repositories;
 using NetShip.Services;
+using System.Text.RegularExpressions;
 
 namespace NetShip.Endpoints
 {
@@ -37,10 +39,11 @@ namespace NetShip.Endpoints
                      [FromForm] CrCategoryReqDTO createCategoryDTO,
                      ICategoriesRepository repository,
                      IOutputCacheStore outputCacheStore,
+                     DigitalMenuService digitalMenuService,
                      IMapper mapper,
                      IFileStorage fileStorage)
         {
-            var category = mapper.Map<Category>(createCategoryDTO);
+            var category = mapper.Map<Entities.Category>(createCategoryDTO);
 
             if (createCategoryDTO.Icon is not null)
             {
@@ -49,6 +52,7 @@ namespace NetShip.Endpoints
             }
 
             await repository.Create(category);
+            await digitalMenuService.UpdateDigitalMenuJsonForCategory(category.CatalogId);
             await outputCacheStore.EvictByTagAsync("get-categories", default);
 
             return TypedResults.NoContent();
@@ -59,6 +63,7 @@ namespace NetShip.Endpoints
             Guid categoryId,
             [FromForm] UpCategoryReqDTO updateCategoryDTO,
             ICategoriesRepository repository,
+            DigitalMenuService digitalMenuService,
             IMapper mapper,
             IFileStorage fileStorage,
             IOutputCacheStore outputCacheStore)
@@ -79,6 +84,7 @@ namespace NetShip.Endpoints
             }
 
             await repository.Update(categoryToUpdate);
+            await digitalMenuService.UpdateDigitalMenuJsonForCategory(categoryToUpdate.CatalogId);
             await outputCacheStore.EvictByTagAsync("get-categories", default);
 
             return TypedResults.NoContent();
@@ -121,6 +127,7 @@ namespace NetShip.Endpoints
             Guid categoryId,
             ICategoriesRepository repository,
             IFileStorage fileStorage,
+            DigitalMenuService digitalMenuService,
             IOutputCacheStore outputCacheStore)
         {
 
@@ -133,6 +140,7 @@ namespace NetShip.Endpoints
 
             await repository.Delete(categoryId);
             await fileStorage.Delete(regDB.Icon, container);
+            await digitalMenuService.UpdateDigitalMenuJsonForCategory(regDB.CatalogId);
             await outputCacheStore.EvictByTagAsync("get-categories", default);
             return TypedResults.NoContent();
         }

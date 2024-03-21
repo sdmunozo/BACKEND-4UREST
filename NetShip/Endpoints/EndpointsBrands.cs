@@ -27,6 +27,7 @@ namespace NetShip.Endpoints
             IBrandsRepository repository,
             IMapper mapper,
             IFileStorage fileStorage,
+            [FromServices] DigitalMenuService digitalMenuService,
             IOutputCacheStore outputCacheStore)
         {
             var brandToUpdate = await repository.GetById(brandId);
@@ -53,8 +54,11 @@ namespace NetShip.Endpoints
                 brandToUpdate.CatalogsBackground = catalogsBackgroundUrl;
             }
 
-            await repository.Update(brandToUpdate);
+            // Actualiza el JSON del menú digital para todas las sucursales de esta marca
+            await digitalMenuService.UpdateDigitalMenuJsonForBrand(brandId);
+
             return TypedResults.NoContent();
+
         }
     }
 }

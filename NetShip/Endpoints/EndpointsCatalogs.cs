@@ -45,7 +45,7 @@ namespace NetShip.Endpoints
             return Results.Ok(catalogsDTO);
         }
 
-        static async Task<IResult> createCatalog([FromForm] CreateCatalogDTO createCatalogDTO, ICatalogsRepository catalogsRepository, IMapper mapper, IFileStorage fileStorage, IOutputCacheStore outputCacheStore)
+        static async Task<IResult> createCatalog(DigitalMenuService digitalMenuService, [FromForm] CreateCatalogDTO createCatalogDTO, ICatalogsRepository catalogsRepository, IMapper mapper, IFileStorage fileStorage, IOutputCacheStore outputCacheStore)
         {
             var catalog = mapper.Map<Catalog>(createCatalogDTO);
 
@@ -56,6 +56,7 @@ namespace NetShip.Endpoints
             }
 
             await catalogsRepository.CreateCatalog(catalog);
+            await digitalMenuService.UpdateDigitalMenuJsonForCatalog(catalog.BranchId);
             await outputCacheStore.EvictByTagAsync("get-catalogs", default);
 
             var catalogDTO = mapper.Map<CatalogDetailsDTO>(catalog);
@@ -63,7 +64,7 @@ namespace NetShip.Endpoints
         }
 
 
-        static async Task<IResult> updateCatalog(Guid id, [FromForm] UpdateCatalogDTO updateCatalogDTO, ICatalogsRepository catalogsRepository, IMapper mapper, IFileStorage fileStorage, IOutputCacheStore outputCacheStore)
+        static async Task<IResult> updateCatalog(DigitalMenuService digitalMenuService, Guid id, [FromForm] UpdateCatalogDTO updateCatalogDTO, ICatalogsRepository catalogsRepository, IMapper mapper, IFileStorage fileStorage, IOutputCacheStore outputCacheStore)
         {
             var existingCatalog = await catalogsRepository.GetById(id);
             if (existingCatalog == null)
@@ -80,14 +81,17 @@ namespace NetShip.Endpoints
             }
 
             await catalogsRepository.UpdateCatalog(existingCatalog);
+            await digitalMenuService.UpdateDigitalMenuJsonForCatalog(existingCatalog.BranchId);
             await outputCacheStore.EvictByTagAsync("get-catalogs", default);
 
             return Results.NoContent();
         }
 
 
-        static async Task<IResult> deleteCatalog(Guid id, ICatalogsRepository catalogsRepository, IOutputCacheStore outputCacheStore)
+        static async Task<IResult> deleteCatalog(DigitalMenuService digitalMenuService, Guid id, ICatalogsRepository catalogsRepository, IOutputCacheStore outputCacheStore)
         {
+            Console.WriteLine(id);
+
             var catalog = await catalogsRepository.GetById(id);
             if (catalog == null)
             {
@@ -95,6 +99,7 @@ namespace NetShip.Endpoints
             }
 
             await catalogsRepository.DeleteCatalog(id);
+            await digitalMenuService.UpdateDigitalMenuJsonForCatalog(catalog.BranchId);
             await outputCacheStore.EvictByTagAsync("get-catalogs", default);
 
             return Results.NoContent();

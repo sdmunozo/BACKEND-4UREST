@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "CkboK3LiAlCpR2ag3AD6uFiorKP3TfZyLBvERdgOWVGJaoaemp9zluInBsJCZ/3jDJMxlUZ7YXvJ5HL9qDMDIA==",
+  "dgSpecHash": "dHLxzm9mEMzV1XCNpvgZ4XxFks4wGcAF5qSVIdpCpoZak6C9iy9tKOK2Hqtta/ZQl3byD6F2lpwjWph3d7Qq6Q==",
   "success": true,
   "projectFilePath": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\NetShip.csproj",
   "expectedPackageFiles": [
@@ -47,6 +47,7 @@
     "C:\\Users\\USER\\.nuget\\packages\\microsoft.identitymodel.tokens\\7.1.2\\microsoft.identitymodel.tokens.7.1.2.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\npgsql\\8.0.2\\npgsql.8.0.2.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\8.0.2\\npgsql.entityframeworkcore.postgresql.8.0.2.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\qrcoder\\1.4.3\\qrcoder.1.4.3.nupkg.sha512",

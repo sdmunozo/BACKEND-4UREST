@@ -10,7 +10,8 @@
         public string? QrCodePath { get; set; } = null;
         public Guid BrandId { get; set; }
         public List<Catalog> Catalogs { get; set; } = new List<Catalog>();
-        
+        public string DigitalMenuJson { get; set; } = "{}";
+
         //Propiedades de Navegacion:
         public Brand Brand { get; set; }
     }

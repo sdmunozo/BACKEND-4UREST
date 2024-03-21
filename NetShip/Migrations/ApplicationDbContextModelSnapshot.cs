@@ -243,6 +243,10 @@ namespace NetShip.Migrations
                     b.Property<Guid>("BrandId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("DigitalMenuJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("DigitalMenuLink")
                         .HasColumnType("text");
 

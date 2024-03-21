@@ -10,6 +10,7 @@ using NetShip.DTOs.Brand;
 using NetShip.Entities;
 using NetShip.Filters;
 using NetShip.Repositories;
+using NetShip.Services;
 using NetShip.Utilities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -32,7 +33,8 @@ namespace NetShip.Endpoints
     [FromServices] IBrandsRepository brandsRepository,
     [FromServices] IBranchesRepository branchesRepository,
     [FromServices] IPlatformsRepository platformsRepository,
-    IConfiguration configuration, ILoggerFactory loggerFactory)
+    IConfiguration configuration, ILoggerFactory loggerFactory,
+    [FromServices] DigitalMenuService digitalMenuService)
         {
 
             var type = typeof(EndpointsUsers);
@@ -65,6 +67,12 @@ namespace NetShip.Endpoints
                 };
 
                 var branchId = await branchesRepository.Create(branch);
+
+                // Llamar al servicio DigitalMenuService para crear el JSON del menú digital
+                await digitalMenuService.CreateInitialDigitalMenuJson(branchId);
+
+                // Resto de tu lógica de registro
+
 
                 var platform = new Platform
                 {

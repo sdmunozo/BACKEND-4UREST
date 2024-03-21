@@ -32,6 +32,8 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => {
 
 builder.Services.AddScoped<UserManager<ApplicationUser>>();
 builder.Services.AddScoped<SignInManager<ApplicationUser>>();
+builder.Services.AddScoped<DigitalMenuService>();
+
 
 builder.Services.AddCors(options => options.AddDefaultPolicy(
     configuration => {
