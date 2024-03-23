@@ -10,5 +10,6 @@
         public bool IsScheduleActive { get; set; }
         public int Sort { get; set; }
         public IFormFile? Icon { get; set; }
+        public double Price { get; set; }
     }
 }

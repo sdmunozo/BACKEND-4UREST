@@ -12,5 +12,7 @@ namespace NetShip.Repositories
         Task Update(Product product);
         Task Delete(Guid id);
         Task<List<Product>> GetByName(string name);
+        Task<Product?> GetProductWithCategoryById(Guid productId);
+        Task<Guid?> GetBranchIdOfProduct(Guid productId);
     }
 }

@@ -12,5 +12,6 @@ namespace NetShip.Repositories
         Task Update(ModifiersGroup modifiersGroup);
         Task Delete(Guid id);
         Task<List<ModifiersGroup>> GetByName(string name);
+        Task<Guid?> GetBranchIdByModifiersGroupId(Guid modifiersGroupId);
     }
 }

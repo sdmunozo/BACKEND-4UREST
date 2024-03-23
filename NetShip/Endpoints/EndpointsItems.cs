@@ -9,6 +9,7 @@ using NetShip.Repositories;
 using NetShip.Services;
 using NetShip.DTOs.Items;
 using System;
+using NetShip.DTOs.DigitalMenu;
 
 namespace NetShip.Endpoints
 {
@@ -38,8 +39,7 @@ namespace NetShip.Endpoints
             group.MapGet("getByName/{itemName}", getItemByName).WithName("GetItemByName")
                 .RequireAuthorization();
 
-            group.MapPost("setPlatform/{itemId:Guid}", SetPlatform).WithName("SetPlatformItem")
-                .RequireAuthorization();
+           // group.MapPost("setPlatform/{itemId:Guid}", SetPlatform).WithName("SetPlatformItem").RequireAuthorization();
 
             return group;
         }
@@ -49,9 +49,10 @@ namespace NetShip.Endpoints
                      IItemsRepository repository,
                      IOutputCacheStore outputCacheStore,
                      IMapper mapper,
-                     IFileStorage fileStorage)
+                     IFileStorage fileStorage,
+                     DigitalMenuService digitalMenuService)
         {
-            var item = mapper.Map<Item>(createItemDTO);
+            var item = mapper.Map<Entities.Item>(createItemDTO);
 
             if (createItemDTO.Icon is not null)
             {
@@ -60,11 +61,12 @@ namespace NetShip.Endpoints
             }
 
             await repository.Create(item);
+            await digitalMenuService.UpdateDigitalMenuJsonForItem(item.Id);
             await outputCacheStore.EvictByTagAsync("get-items", default);
 
             return TypedResults.NoContent();
         }
-
+        
 
         static async Task<Results<NoContent, NotFound>> updateItem(
             Guid itemId,
@@ -72,7 +74,8 @@ namespace NetShip.Endpoints
             IItemsRepository repository,
             IMapper mapper,
             IFileStorage fileStorage,
-            IOutputCacheStore outputCacheStore)
+            IOutputCacheStore outputCacheStore,
+            DigitalMenuService digitalMenuService)
         {
             var itemToUpdate = await repository.GetById(itemId);
 
@@ -90,12 +93,11 @@ namespace NetShip.Endpoints
             }
 
             await repository.Update(itemToUpdate);
+            await digitalMenuService.UpdateDigitalMenuJsonForItem(itemId);
             await outputCacheStore.EvictByTagAsync("get-items", default);
 
             return TypedResults.NoContent();
         }
-
-
 
         static async Task<Results<Ok<ItemDTO>, NotFound>> getItemById(IItemsRepository repository, Guid itemId, IMapper mapper)
         {
@@ -132,7 +134,8 @@ namespace NetShip.Endpoints
             Guid itemId,
             IItemsRepository repository,
             IFileStorage fileStorage,
-            IOutputCacheStore outputCacheStore)
+            IOutputCacheStore outputCacheStore,
+            DigitalMenuService digitalMenuService)
         {
 
             var regDB = await repository.GetById(itemId);
@@ -142,12 +145,23 @@ namespace NetShip.Endpoints
                 return TypedResults.NotFound();
             }
 
+            var branchIdNullable = await repository.GetBranchIdOfItem(itemId);
+
+            if (!branchIdNullable.HasValue)
+            {
+                return TypedResults.NotFound();
+            }
+
+            Guid branchId = branchIdNullable.Value;
+
             await repository.Delete(itemId);
             await fileStorage.Delete(regDB.Icon, container);
+            await digitalMenuService.RemoveItemFromDigitalMenuJson(itemId, branchId);
             await outputCacheStore.EvictByTagAsync("get-items", default);
             return TypedResults.NoContent();
         }
 
+        /*
         static async Task<Results<NoContent, NotFound, BadRequest<string>>> SetPlatform(Guid itemId, List<SetPlatformItem> setPlatforms,
             IItemsRepository itemsRepository, IPlatformsRepository platformsRepository, IMapper mapper)
         {
@@ -176,6 +190,64 @@ namespace NetShip.Endpoints
             await itemsRepository.SetPlatforms(itemId, platforms);
             return TypedResults.NoContent();
         }
+
+        */
     }
 }
 
+
+/*
+  static async Task<Results<NoContent, NotFound>> createItem(
+                     [FromForm] CrItemReqDTO createItemDTO,
+                     IItemsRepository itemsRepository,
+                     IPlatformsRepository platformsRepository,
+                     IOutputCacheStore outputCacheStore,
+                     IMapper mapper,
+                     IFileStorage fileStorage,
+                     DigitalMenuService digitalMenuService)
+        {
+            var item = mapper.Map<Entities.Item>(createItemDTO);
+
+            if (createItemDTO.Icon is not null)
+            {
+                var url = await fileStorage.Upload(container, createItemDTO.Icon);
+                item.Icon = url;
+            }
+
+            var itemId = await itemsRepository.Create(item);
+
+            // Obtén el branchId asociado al ítem.
+            var branchIdNullable = await itemsRepository.GetBranchIdOfItem(itemId);
+            if (!branchIdNullable.HasValue)
+            {
+                Console.Write("BRANCH NOT FOUNT");
+                return TypedResults.NotFound();
+            }
+
+            Guid brandId = await itemsRepository.GetBrandIdOfItem(itemId) ?? Guid.Empty;
+            
+                var basePlatformIdNullable = await platformsRepository.GetBasePlatformIdByBrandId(brandId);
+                if (!basePlatformIdNullable.HasValue)
+                {
+                    Console.Write("BRAND NOT FOUNT");
+                    return TypedResults.NotFound();
+                }
+
+                Guid basePlatformId = basePlatformIdNullable.Value;
+                // Crea el objeto PricePerItemPerPlatform.
+                var pricePerItemPerPlatform = new PricePerItemPerPlatform
+                {
+                    ItemId = itemId,
+                    PlatformId = basePlatformId,
+                    Price = createItemDTO.Price
+                };
+
+
+                // Configura las plataformas para el ítem creado.
+                await itemsRepository.SetPlatforms(itemId, new List<PricePerItemPerPlatform> { pricePerItemPerPlatform });
+                await digitalMenuService.UpdateDigitalMenuJsonForItem(itemId);
+                await outputCacheStore.EvictByTagAsync("get-items", default);
+                return TypedResults.NoContent();
+        }
+ 
+ */

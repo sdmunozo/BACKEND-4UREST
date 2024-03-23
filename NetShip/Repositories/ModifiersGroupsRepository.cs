@@ -55,5 +55,16 @@ namespace NetShip.Repositories
             return await context.ModifiersGroups.Where(c => c.Name.Contains(name)).OrderBy(c => c.Name).ToListAsync();
         }
 
+        public async Task<Guid?> GetBranchIdByModifiersGroupId(Guid modifiersGroupId)
+        {
+            var branchId = await context.ModifiersGroups
+                .Where(mg => mg.Id == modifiersGroupId)
+                .Select(mg => mg.Product.Category.Catalog.BranchId)
+                .FirstOrDefaultAsync();
+
+            return branchId;
+        }
+
+
     }
 }

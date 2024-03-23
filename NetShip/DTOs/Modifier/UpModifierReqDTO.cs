@@ -12,5 +12,6 @@
         public IFormFile? Icon { get; set; }
         public int MinModifier { get; set; }
         public int MaxModifier { get; set; }
+        public double Price { get; set; }
     }
 }

@@ -11,7 +11,8 @@
         public int Sort { get; set; } = -1;
         public Guid CategoryId { get; set; }
         public string? Icon { get; set; }
-        public List<PricePerItemPerPlatform> PricePerItemPerPlatforms { get; set; } = new List<PricePerItemPerPlatform>();
+        public decimal? Price { get; set; }
+        //public List<PricePerItemPerPlatform> PricePerItemPerPlatforms { get; set; } = new List<PricePerItemPerPlatform>();
         public Category Category { get; set; }
     }
 }

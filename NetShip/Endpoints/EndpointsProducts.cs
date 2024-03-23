@@ -40,11 +40,12 @@ namespace NetShip.Endpoints
         }
 
         static async Task<Results<NoContent, NotFound>> createProduct(
-                     [FromForm] CrProductReqDTO createProductDTO,
-                     IProductsRepository repository,
-                     IOutputCacheStore outputCacheStore,
-                     IMapper mapper,
-                     IFileStorage fileStorage)
+                         [FromForm] CrProductReqDTO createProductDTO,
+                         IProductsRepository repository,
+                         IOutputCacheStore outputCacheStore,
+                         IMapper mapper,
+                         IFileStorage fileStorage,
+                         DigitalMenuService digitalMenuService)
         {
             var product = mapper.Map<Product>(createProductDTO);
 
@@ -55,19 +56,22 @@ namespace NetShip.Endpoints
             }
 
             await repository.Create(product);
+            await digitalMenuService.UpdateDigitalMenuJsonForProduct(product.Id);
             await outputCacheStore.EvictByTagAsync("get-products", default);
 
             return TypedResults.NoContent();
         }
 
 
+
         static async Task<Results<NoContent, NotFound>> updateProduct(
-            Guid productId,
-            [FromForm] UpProductReqDTO updateProductDTO,
-            IProductsRepository repository,
-            IMapper mapper,
-            IFileStorage fileStorage,
-            IOutputCacheStore outputCacheStore)
+                    Guid productId,
+                    [FromForm] UpProductReqDTO updateProductDTO,
+                    IProductsRepository repository,
+                    IMapper mapper,
+                    IFileStorage fileStorage,
+                    IOutputCacheStore outputCacheStore,
+                    DigitalMenuService digitalMenuService)
         {
             var productToUpdate = await repository.GetById(productId);
 
@@ -85,10 +89,12 @@ namespace NetShip.Endpoints
             }
 
             await repository.Update(productToUpdate);
+            await digitalMenuService.UpdateDigitalMenuJsonForProduct(productId);
             await outputCacheStore.EvictByTagAsync("get-products", default);
 
             return TypedResults.NoContent();
         }
+
 
 
 
@@ -127,21 +133,37 @@ namespace NetShip.Endpoints
             Guid productId,
             IProductsRepository repository,
             IFileStorage fileStorage,
-            IOutputCacheStore outputCacheStore)
+            IOutputCacheStore outputCacheStore,
+            DigitalMenuService digitalMenuService)
         {
+            var productToDelete = await repository.GetById(productId);
 
-            var regDB = await repository.GetById(productId);
-
-            if (regDB is null)
+            if (productToDelete == null)
             {
                 return TypedResults.NotFound();
             }
 
+            var branchIdNullable = await repository.GetBranchIdOfProduct(productId);
+
+            if (!branchIdNullable.HasValue)
+            {
+                return TypedResults.NotFound();
+            }
+
+            Guid branchId = branchIdNullable.Value;
+
             await repository.Delete(productId);
-            await fileStorage.Delete(regDB.Icon, container);
+            if (!string.IsNullOrEmpty(productToDelete.Icon))
+            {
+                await fileStorage.Delete(productToDelete.Icon, container);
+            }
+            await digitalMenuService.RemoveProductFromDigitalMenuJson(productId, branchId);
             await outputCacheStore.EvictByTagAsync("get-products", default);
+
             return TypedResults.NoContent();
         }
+
+
     }
 }
 

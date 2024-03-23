@@ -60,5 +60,15 @@ namespace NetShip.Repositories
             return await context.Platforms.Where(x => ids.Contains(x.Id)).Select(x => x.Id).ToListAsync();
         }
 
+        public async Task<Guid?> GetBasePlatformIdByBrandId(Guid brandId)
+        {
+            var basePlatform = await context.Platforms
+                .Where(p => p.BrandId == brandId && p.Name == "Base")
+                .FirstOrDefaultAsync();
+
+            return basePlatform?.Id;
+
+
+        }
     }
 }

@@ -58,6 +58,7 @@ namespace NetShip.Repositories
             return await context.Items.Where(c => c.Name.Contains(name)).OrderBy(c => c.Name).ToListAsync();
         }
 
+        /*
         public async Task SetPlatforms(Guid id, List<PricePerItemPerPlatform> platforms)
         {
             var item = await context.Items
@@ -72,6 +73,26 @@ namespace NetShip.Repositories
             item.PricePerItemPerPlatforms = mapper.Map(platforms, item.PricePerItemPerPlatforms);
 
             await context.SaveChangesAsync();
+        }
+
+        */
+
+        public async Task<Guid?> GetBranchIdOfItem(Guid itemId)
+        {
+            var itemWithBranch = await context.Items
+                                                 .Where(p => p.Id == itemId)
+                                                 .Select(p => p.Category.Catalog.BranchId)
+                                                 .FirstOrDefaultAsync();
+            return itemWithBranch;
+        }
+
+        public async Task<Guid?> GetBrandIdOfItem(Guid itemId)
+        {
+            var itemWithBrand = await context.Items
+                                              .Where(i => i.Id == itemId)
+                                              .Select(i => i.Category.Catalog.Branch.BrandId)
+                                              .FirstOrDefaultAsync();
+            return itemWithBrand;
         }
 
     }

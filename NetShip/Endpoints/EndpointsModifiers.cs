@@ -7,6 +7,7 @@ using NetShip.DTOs.Common;
 using NetShip.Entities;
 using NetShip.Repositories;
 using NetShip.Services;
+using NetShip.DTOs.DigitalMenu;
 
 namespace NetShip.Endpoints
 {
@@ -36,8 +37,7 @@ namespace NetShip.Endpoints
             group.MapGet("getByName/{modifierName}", getModifierByName).WithName("GetModifierByName")
                 .RequireAuthorization();
 
-            group.MapPost("setPlatform/{modifierId:Guid}", SetPlatform).WithName("SetPlatformModifier")
-                .RequireAuthorization();
+           // group.MapPost("setPlatform/{modifierId:Guid}", SetPlatform).WithName("SetPlatformModifier").RequireAuthorization();
 
             return group;
         }
@@ -47,9 +47,10 @@ namespace NetShip.Endpoints
                      IModifiersRepository repository,
                      IOutputCacheStore outputCacheStore,
                      IMapper mapper,
-                     IFileStorage fileStorage)
+                     IFileStorage fileStorage,
+                     DigitalMenuService digitalMenuService)
         {
-            var modifier = mapper.Map<Modifier>(createModifierDTO);
+            var modifier = mapper.Map<Entities.Modifier>(createModifierDTO);
 
             if (createModifierDTO.Icon is not null)
             {
@@ -57,7 +58,9 @@ namespace NetShip.Endpoints
                 modifier.Icon = url;
             }
 
-            await repository.Create(modifier);
+            Guid createdModifierId = await repository.Create(modifier);
+            await digitalMenuService.UpdateDigitalMenuJsonForModifier(createdModifierId);
+
             await outputCacheStore.EvictByTagAsync("get-modifiers", default);
 
             return TypedResults.NoContent();
@@ -70,7 +73,8 @@ namespace NetShip.Endpoints
             IModifiersRepository repository,
             IMapper mapper,
             IFileStorage fileStorage,
-            IOutputCacheStore outputCacheStore)
+            IOutputCacheStore outputCacheStore,
+            DigitalMenuService digitalMenuService)
         {
             var modifierToUpdate = await repository.GetById(modifierId);
 
@@ -88,6 +92,8 @@ namespace NetShip.Endpoints
             }
 
             await repository.Update(modifierToUpdate);
+            await digitalMenuService.UpdateDigitalMenuJsonForModifier(modifierId);
+
             await outputCacheStore.EvictByTagAsync("get-modifiers", default);
 
             return TypedResults.NoContent();
@@ -130,9 +136,9 @@ namespace NetShip.Endpoints
             Guid modifierId,
             IModifiersRepository repository,
             IFileStorage fileStorage,
-            IOutputCacheStore outputCacheStore)
+            IOutputCacheStore outputCacheStore,
+            DigitalMenuService digitalMenuService)
         {
-
             var regDB = await repository.GetById(modifierId);
 
             if (regDB is null)
@@ -140,12 +146,21 @@ namespace NetShip.Endpoints
                 return TypedResults.NotFound();
             }
 
+            Guid? branchId = await repository.GetBranchIdByModifierId(modifierId);
+
+
+            if (!branchId.HasValue)
+            {
+                return TypedResults.NotFound();
+            }
+
             await repository.Delete(modifierId);
             await fileStorage.Delete(regDB.Icon, container);
+            await digitalMenuService.RemoveModifierFromDigitalMenuJson(modifierId, branchId.Value);
             await outputCacheStore.EvictByTagAsync("get-modifiers", default);
             return TypedResults.NoContent();
         }
-
+        /*
         static async Task<Results<NoContent, NotFound, BadRequest<string>>> SetPlatform(Guid modifierId, List<SetPlatformModifier> setModifiers,
                                 IModifiersRepository modifiersRepository, IPlatformsRepository platformsRepository, IMapper mapper)
         {
@@ -174,7 +189,7 @@ namespace NetShip.Endpoints
             await modifiersRepository.SetPlatforms(modifierId, platforms);
             return TypedResults.NoContent();
         }
-
+        */
     }
 }
 

@@ -13,5 +13,6 @@ namespace NetShip.Repositories
         Task Delete(Guid id);
         Task<List<Platform>> GetByName(string name);
         Task<List<Guid>> CheckAll(List<Guid> ids);
+        Task<Guid?> GetBasePlatformIdByBrandId(Guid brandId);
     }
 }

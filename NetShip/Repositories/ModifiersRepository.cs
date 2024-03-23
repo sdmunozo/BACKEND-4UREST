@@ -57,7 +57,7 @@ namespace NetShip.Repositories
         {
             return await context.Modifiers.Where(c => c.Name.Contains(name)).OrderBy(c => c.Name).ToListAsync();
         }
-
+        /*
         public async Task SetPlatforms(Guid id, List<PricePerModifierPerPlatform> platforms)
         {
             var modifier = await context.Modifiers
@@ -72,6 +72,16 @@ namespace NetShip.Repositories
             modifier.PricePerModifierPerPlatforms = mapper.Map(platforms, modifier.PricePerModifierPerPlatforms);
 
             await context.SaveChangesAsync();
+        }
+        */
+        public async Task<Guid?> GetBranchIdByModifierId(Guid modifierId)
+        {
+            var branchId = await context.Modifiers
+                .Where(mg => mg.Id == modifierId)
+                .Select(mg => mg.ModifiersGroup.Product.Category.Catalog.BranchId)
+                .FirstOrDefaultAsync();
+
+            return branchId;
         }
 
     }

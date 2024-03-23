@@ -36,12 +36,12 @@ namespace NetShip.Endpoints
         }
 
         static async Task<Results<NoContent, NotFound>> createCategory(
-                     [FromForm] CrCategoryReqDTO createCategoryDTO,
-                     ICategoriesRepository repository,
-                     IOutputCacheStore outputCacheStore,
-                     DigitalMenuService digitalMenuService,
-                     IMapper mapper,
-                     IFileStorage fileStorage)
+            [FromForm] CrCategoryReqDTO createCategoryDTO,
+            ICategoriesRepository repository,
+            IOutputCacheStore outputCacheStore,
+            DigitalMenuService digitalMenuService,
+            IMapper mapper,
+            IFileStorage fileStorage)
         {
             var category = mapper.Map<Entities.Category>(createCategoryDTO);
 
@@ -52,21 +52,24 @@ namespace NetShip.Endpoints
             }
 
             await repository.Create(category);
+
+            var categoryDigitalMenuDTO = mapper.Map<DTOs.DigitalMenu.Category>(category);
+
             await digitalMenuService.UpdateDigitalMenuJsonForCategory(category.CatalogId);
+
             await outputCacheStore.EvictByTagAsync("get-categories", default);
 
             return TypedResults.NoContent();
         }
 
-
         static async Task<Results<NoContent, NotFound>> updateCategory(
-            Guid categoryId,
-            [FromForm] UpCategoryReqDTO updateCategoryDTO,
-            ICategoriesRepository repository,
-            DigitalMenuService digitalMenuService,
-            IMapper mapper,
-            IFileStorage fileStorage,
-            IOutputCacheStore outputCacheStore)
+          Guid categoryId,
+          [FromForm] UpCategoryReqDTO updateCategoryDTO,
+          ICategoriesRepository repository,
+          DigitalMenuService digitalMenuService,
+          IMapper mapper,
+          IFileStorage fileStorage,
+          IOutputCacheStore outputCacheStore)
         {
             var categoryToUpdate = await repository.GetById(categoryId);
 
@@ -84,13 +87,15 @@ namespace NetShip.Endpoints
             }
 
             await repository.Update(categoryToUpdate);
+
+            var categoryDigitalMenuDTO = mapper.Map<DTOs.DigitalMenu.Category>(categoryToUpdate);
             await digitalMenuService.UpdateDigitalMenuJsonForCategory(categoryToUpdate.CatalogId);
+
+
             await outputCacheStore.EvictByTagAsync("get-categories", default);
 
             return TypedResults.NoContent();
         }
-
-
 
         static async Task<Results<Ok<CategoryDTO>, NotFound>> getCategoryById(ICategoriesRepository repository, Guid categoryId, IMapper mapper)
         {
@@ -124,26 +129,41 @@ namespace NetShip.Endpoints
         }
 
         static async Task<Results<NoContent, NotFound>> deleteCategory(
-            Guid categoryId,
-            ICategoriesRepository repository,
-            IFileStorage fileStorage,
-            DigitalMenuService digitalMenuService,
-            IOutputCacheStore outputCacheStore)
+                                                    Guid categoryId,
+                                                    ICategoriesRepository categoriesRepository,
+                                                    IBranchesRepository branchesRepository,
+                                                    IFileStorage fileStorage,
+                                                    DigitalMenuService digitalMenuService,
+                                                    IOutputCacheStore outputCacheStore)
         {
+            var categoryToDelete = await categoriesRepository.GetCategoryWithCatalogById(categoryId);
 
-            var regDB = await repository.GetById(categoryId);
-
-            if (regDB is null)
+            if (categoryToDelete == null)
             {
                 return TypedResults.NotFound();
             }
 
-            await repository.Delete(categoryId);
-            await fileStorage.Delete(regDB.Icon, container);
-            await digitalMenuService.UpdateDigitalMenuJsonForCategory(regDB.CatalogId);
+            if (categoryToDelete.Catalog == null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            var branchId = categoryToDelete.Catalog.BranchId;
+
+            await categoriesRepository.Delete(categoryId);
+
+            if (!string.IsNullOrEmpty(categoryToDelete.Icon))
+            {
+                await fileStorage.Delete(categoryToDelete.Icon, container);
+            }
+
+            await digitalMenuService.RemoveCategoryFromDigitalMenuJson(categoryId, branchId);
+
             await outputCacheStore.EvictByTagAsync("get-categories", default);
+
             return TypedResults.NoContent();
         }
+
     }
 }
 

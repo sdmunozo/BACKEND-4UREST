@@ -5,6 +5,8 @@ namespace NetShip.DTOs.DigitalMenu
 {
     public class BranchCatalogResponse
     {
+        public string BrandId { get; set; }
+        public string BranchId { get; set; }
         public string BrandName { get; set; }
         public string BranchName { get; set; }
         public string InstagramLink { get; set; }
@@ -18,6 +20,7 @@ namespace NetShip.DTOs.DigitalMenu
 
     public class Catalog
     {
+        public string Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string Icon { get; set; }
@@ -26,6 +29,7 @@ namespace NetShip.DTOs.DigitalMenu
 
     public class Category
     {
+        public string Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string Icon { get; set; }
@@ -35,14 +39,16 @@ namespace NetShip.DTOs.DigitalMenu
 
     public class Item
     {
+        public string Id { get; set; }
         public string Alias { get; set; }
         public string Description { get; set; }
         public string Icon { get; set; }
-        public decimal Price { get; set; }
+        public string Price { get; set; }
     }
 
     public class Product
     {
+        public string Id { get; set; }
         public string Alias { get; set; }
         public string Description { get; set; }
         public string Icon { get; set; }
@@ -51,6 +57,7 @@ namespace NetShip.DTOs.DigitalMenu
 
     public class ModifiersGroup
     {
+        public string Id { get; set; }
         public string Alias { get; set; }
         public string Description { get; set; }
         public string Icon { get; set; }
@@ -59,9 +66,10 @@ namespace NetShip.DTOs.DigitalMenu
 
     public class Modifier
     {
+        public string Id { get; set; }
         public string Alias { get; set; }
         public string Description { get; set; }
         public string Icon { get; set; }
-        public decimal Price { get; set; }
+        public string Price { get; set; }
     }
 }

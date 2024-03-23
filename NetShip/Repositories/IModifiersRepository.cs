@@ -12,6 +12,7 @@ namespace NetShip.Repositories
         Task Update(Modifier modifier);
         Task Delete(Guid id);
         Task<List<Modifier>> GetByName(string name);
-        Task SetPlatforms(Guid id, List<PricePerModifierPerPlatform> platforms);
+       // Task SetPlatforms(Guid id, List<PricePerModifierPerPlatform> platforms);
+        Task<Guid?> GetBranchIdByModifierId(Guid modifierId);
     }
 }

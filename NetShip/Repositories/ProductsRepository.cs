@@ -56,5 +56,24 @@ namespace NetShip.Repositories
         {
             return await context.Products.Where(c => c.Name.Contains(name)).OrderBy(c => c.Name).ToListAsync();
         }
+
+        public async Task<Product?> GetProductWithCategoryById(Guid productId)
+        {
+            return await context.Products
+                                .Include(p => p.Category)
+                                .ThenInclude(c => c.Catalog)
+                                .AsNoTracking()
+                                .FirstOrDefaultAsync(p => p.Id == productId);
+        }
+
+        public async Task<Guid?> GetBranchIdOfProduct(Guid productId)
+        {
+            var productWithBranch = await context.Products
+                                                 .Where(p => p.Id == productId)
+                                                 .Select(p => p.Category.Catalog.BranchId)
+                                                 .FirstOrDefaultAsync();
+            return productWithBranch;
+        }
+
     }
 }

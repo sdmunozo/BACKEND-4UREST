@@ -417,6 +417,9 @@ namespace NetShip.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
+                    b.Property<decimal?>("Price")
+                        .HasColumnType("numeric");
+
                     b.Property<int>("Sort")
                         .HasColumnType("integer");
 
@@ -459,6 +462,9 @@ namespace NetShip.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
+
+                    b.Property<decimal?>("Price")
+                        .HasColumnType("numeric");
 
                     b.Property<int>("Sort")
                         .HasColumnType("integer");
@@ -779,7 +785,7 @@ namespace NetShip.Migrations
             modelBuilder.Entity("NetShip.Entities.PricePerItemPerPlatform", b =>
                 {
                     b.HasOne("NetShip.Entities.Item", "Item")
-                        .WithMany("PricePerItemPerPlatforms")
+                        .WithMany()
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -798,7 +804,7 @@ namespace NetShip.Migrations
             modelBuilder.Entity("NetShip.Entities.PricePerModifierPerPlatform", b =>
                 {
                     b.HasOne("NetShip.Entities.Modifier", "Modifier")
-                        .WithMany("PricePerModifierPerPlatforms")
+                        .WithMany()
                         .HasForeignKey("ModifierId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -852,16 +858,6 @@ namespace NetShip.Migrations
                     b.Navigation("Items");
 
                     b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("NetShip.Entities.Item", b =>
-                {
-                    b.Navigation("PricePerItemPerPlatforms");
-                });
-
-            modelBuilder.Entity("NetShip.Entities.Modifier", b =>
-                {
-                    b.Navigation("PricePerModifierPerPlatforms");
                 });
 
             modelBuilder.Entity("NetShip.Entities.ModifiersGroup", b =>

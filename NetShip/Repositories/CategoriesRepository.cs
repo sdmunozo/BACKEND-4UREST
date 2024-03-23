@@ -55,5 +55,12 @@ namespace NetShip.Repositories
             return await context.Categories.Where(c => c.Name.Contains(name)).OrderBy(c => c.Name).ToListAsync();
         }
 
+        public async Task<Category?> GetCategoryWithCatalogById(Guid categoryId)
+        {
+            return await context.Categories
+                                 .Include(c => c.Catalog)
+                                 .FirstOrDefaultAsync(c => c.Id == categoryId);
+        }
+
     }
 }

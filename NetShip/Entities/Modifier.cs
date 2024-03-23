@@ -13,7 +13,8 @@
         public string? Icon { get; set; }
         public int MinModifier { get; set; } = -1;
         public int MaxModifier { get; set; } = -1;
-        public List<PricePerModifierPerPlatform> PricePerModifierPerPlatforms { get; set; } = new List<PricePerModifierPerPlatform>();
+        public decimal? Price { get; set; }
+        //public List<PricePerModifierPerPlatform> PricePerModifierPerPlatforms { get; set; } = new List<PricePerModifierPerPlatform>();
         public ModifiersGroup ModifiersGroup { get; set; }
     }
 }

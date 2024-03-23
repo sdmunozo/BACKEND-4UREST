@@ -40,11 +40,12 @@ namespace NetShip.Endpoints
         }
 
         static async Task<Results<NoContent, NotFound>> createModifiersGroup(
-                     [FromForm] CrModifiersGroupReqDTO createModifiersGroupDTO,
-                     IModifiersGroupsRepository repository,
-                     IOutputCacheStore outputCacheStore,
-                     IMapper mapper,
-                     IFileStorage fileStorage)
+     [FromForm] CrModifiersGroupReqDTO createModifiersGroupDTO,
+     IModifiersGroupsRepository repository,
+     IOutputCacheStore outputCacheStore,
+     IMapper mapper,
+     IFileStorage fileStorage,
+     DigitalMenuService digitalMenuService)
         {
             var modifiersGroup = mapper.Map<ModifiersGroup>(createModifiersGroupDTO);
 
@@ -54,20 +55,23 @@ namespace NetShip.Endpoints
                 modifiersGroup.Icon = url;
             }
 
-            await repository.Create(modifiersGroup);
+            Guid createdModifiersGroupId = await repository.Create(modifiersGroup);
+            await digitalMenuService.UpdateDigitalMenuJsonForModifiersGroup(createdModifiersGroupId);
             await outputCacheStore.EvictByTagAsync("get-modifiersGroups", default);
 
             return TypedResults.NoContent();
         }
 
 
+
         static async Task<Results<NoContent, NotFound>> updateModifiersGroup(
-            Guid modifiersGroupId,
-            [FromForm] UpModifiersGroupReqDTO updateModifiersGroupDTO,
-            IModifiersGroupsRepository repository,
-            IMapper mapper,
-            IFileStorage fileStorage,
-            IOutputCacheStore outputCacheStore)
+      Guid modifiersGroupId,
+      [FromForm] UpModifiersGroupReqDTO updateModifiersGroupDTO,
+      IModifiersGroupsRepository repository,
+      IMapper mapper,
+      IFileStorage fileStorage,
+      IOutputCacheStore outputCacheStore,
+      DigitalMenuService digitalMenuService)
         {
             var modifiersGroupToUpdate = await repository.GetById(modifiersGroupId);
 
@@ -85,10 +89,12 @@ namespace NetShip.Endpoints
             }
 
             await repository.Update(modifiersGroupToUpdate);
+            await digitalMenuService.UpdateDigitalMenuJsonForModifiersGroup(modifiersGroupId);
             await outputCacheStore.EvictByTagAsync("get-modifiersGroups", default);
 
             return TypedResults.NoContent();
         }
+
 
 
 
@@ -124,24 +130,39 @@ namespace NetShip.Endpoints
         }
 
         static async Task<Results<NoContent, NotFound>> deleteModifiersGroup(
-            Guid modifiersGroupId,
-            IModifiersGroupsRepository repository,
-            IFileStorage fileStorage,
-            IOutputCacheStore outputCacheStore)
+     Guid modifiersGroupId,
+     IModifiersGroupsRepository repository,
+     IFileStorage fileStorage,
+     IOutputCacheStore outputCacheStore,
+     DigitalMenuService digitalMenuService)
         {
+            var modifiersGroupToDelete = await repository.GetById(modifiersGroupId);
 
-            var regDB = await repository.GetById(modifiersGroupId);
+            if (modifiersGroupToDelete == null)
+            {
+                return TypedResults.NotFound();
+            }
 
-            if (regDB is null)
+            Guid? branchId = await repository.GetBranchIdByModifiersGroupId(modifiersGroupId);
+
+            if (!branchId.HasValue)
             {
                 return TypedResults.NotFound();
             }
 
             await repository.Delete(modifiersGroupId);
-            await fileStorage.Delete(regDB.Icon, container);
+
+            if (!string.IsNullOrEmpty(modifiersGroupToDelete.Icon))
+            {
+                await fileStorage.Delete(modifiersGroupToDelete.Icon, container);
+            }
+
+            await digitalMenuService.RemoveModifiersGroupFromDigitalMenuJson(modifiersGroupId, branchId.Value);
             await outputCacheStore.EvictByTagAsync("get-modifiersGroups", default);
+
             return TypedResults.NoContent();
         }
+
     }
 }
 

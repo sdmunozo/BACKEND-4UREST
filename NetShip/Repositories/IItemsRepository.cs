@@ -12,6 +12,8 @@ namespace NetShip.Repositories
         Task Update(Item item);
         Task Delete(Guid id);
         Task<List<Item>> GetByName(string name);
-        Task SetPlatforms(Guid id, List<PricePerItemPerPlatform> platforms);
+        //Task SetPlatforms(Guid id, List<PricePerItemPerPlatform> platforms);
+        Task<Guid?> GetBranchIdOfItem(Guid itemId);
+        Task<Guid?> GetBrandIdOfItem(Guid itemId);
     }
 }

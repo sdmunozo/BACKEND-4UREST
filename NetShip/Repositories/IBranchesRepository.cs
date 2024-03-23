@@ -1,6 +1,7 @@
 ﻿using NetShip.DTOs.Branch;
 using NetShip.DTOs.Brand;
 using NetShip.DTOs.Common;
+using NetShip.DTOs.DigitalMenu;
 using NetShip.Entities;
 
 namespace NetShip.Repositories
@@ -21,8 +22,6 @@ namespace NetShip.Repositories
         Task<Branch?> GetByUrlNormalizedName(string urlNormalizedName);
         Task<Brand?> GetBrandByBranchId(Guid branchId);
         Task<Branch> GetByNormalizedDigitalMenu(string normalizedDigitalMenu);
-        Task<List<Catalog>> GetCatalogsByBranchId(Guid branchId);
-         Task<List<Category>> GetCategoriesByCatalogId(Guid catalogId);
-         Task<List<Item>> GetItemsByCategoryId(Guid categoryId);
+        Task<BranchCatalogResponse?> GetDigitalMenuByBranchId(Guid branchId);
     }
 }
