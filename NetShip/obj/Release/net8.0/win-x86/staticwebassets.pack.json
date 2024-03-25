@@ -1,6 +1,10 @@
 {
   "Files": [
     {
+      "Id": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\brands\\0a46d3e4-4988-4042-83ea-e19e165f7fde.jpg",
+      "PackagePath": "staticwebassets\\brands\\0a46d3e4-4988-4042-83ea-e19e165f7fde.jpg"
+    },
+    {
       "Id": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\brands\\11ada362-37ff-46c8-9669-187ebbb3897c.png",
       "PackagePath": "staticwebassets\\brands\\11ada362-37ff-46c8-9669-187ebbb3897c.png"
     },
@@ -311,6 +315,10 @@
     {
       "Id": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\qrcodes\\7f9bdad8-c47f-478c-bbaa-618a47c07357.png",
       "PackagePath": "staticwebassets\\qrcodes\\7f9bdad8-c47f-478c-bbaa-618a47c07357.png"
+    },
+    {
+      "Id": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\qrcodes\\84e2c10c-918b-4fd4-45ed-08dc4ba99bbb.png",
+      "PackagePath": "staticwebassets\\qrcodes\\84e2c10c-918b-4fd4-45ed-08dc4ba99bbb.png"
     },
     {
       "Id": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\qrcodes\\9870836b-0264-49b5-b7fb-704eb65b2e2f.png",

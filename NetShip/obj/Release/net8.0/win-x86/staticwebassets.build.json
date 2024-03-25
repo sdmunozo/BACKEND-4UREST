@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "6ssbCR6LoNC0QecKYLndHRhKXLRj/JwpKZ8FdN3uws0=",
+  "Hash": "hfYm9LGWmVMTOoDqSzQzzRFXsBLmAqC+D+Evs8+MDaA=",
   "Source": "NetShip",
   "BasePath": "_content/NetShip",
   "Mode": "Default",
@@ -16,6 +16,25 @@
     }
   ],
   "Assets": [
+    {
+      "Identity": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\brands\\0a46d3e4-4988-4042-83ea-e19e165f7fde.jpg",
+      "SourceId": "NetShip",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\",
+      "BasePath": "_content/NetShip",
+      "RelativePath": "brands/0a46d3e4-4988-4042-83ea-e19e165f7fde.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\brands\\0a46d3e4-4988-4042-83ea-e19e165f7fde.jpg"
+    },
     {
       "Identity": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\brands\\11ada362-37ff-46c8-9669-187ebbb3897c.png",
       "SourceId": "NetShip",
@@ -1497,6 +1516,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\qrcodes\\7f9bdad8-c47f-478c-bbaa-618a47c07357.png"
+    },
+    {
+      "Identity": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\qrcodes\\84e2c10c-918b-4fd4-45ed-08dc4ba99bbb.png",
+      "SourceId": "NetShip",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\",
+      "BasePath": "_content/NetShip",
+      "RelativePath": "qrcodes/84e2c10c-918b-4fd4-45ed-08dc4ba99bbb.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\qrcodes\\84e2c10c-918b-4fd4-45ed-08dc4ba99bbb.png"
     },
     {
       "Identity": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\qrcodes\\9870836b-0264-49b5-b7fb-704eb65b2e2f.png",

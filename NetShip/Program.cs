@@ -16,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 // inicio de area de los servicios 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-options.UseNpgsql("name = DefaultConnection"));
+options.UseSqlServer("name = DefaultConnection"));
 
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => {
@@ -33,12 +33,6 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => {
 builder.Services.AddScoped<UserManager<ApplicationUser>>();
 builder.Services.AddScoped<SignInManager<ApplicationUser>>();
 builder.Services.AddScoped<DigitalMenuService>();
-
-
-builder.Services.AddCors(options => options.AddDefaultPolicy(
-    configuration => {
-        configuration.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-    }));
 
 builder.Services.AddOutputCache();
 builder.Services.AddEndpointsApiExplorer();
@@ -65,7 +59,10 @@ builder.Services.AddScoped<IFileStorage, FileLocalStorage>();
 builder.Services.AddTransient<IUserServices, UserServices>();
 builder.Services.AddHttpContextAccessor();
 
-
+builder.Services.Configure<IISServerOptions>(options =>
+{
+    options.AutomaticAuthentication = false;
+});
 
 
 builder.Services.AddAutoMapper(typeof(Program));
@@ -88,7 +85,8 @@ builder.Services.AddAuthorization();
 builder.Services.AddCors(options => options.AddDefaultPolicy(
     builder =>
     {
-        builder.AllowAnyOrigin()//WithOrigins("http://localhost:64048", "http://localhost:52476")
+
+        builder.AllowAnyOrigin()
                .AllowAnyHeader()
                .AllowAnyMethod();
     }));

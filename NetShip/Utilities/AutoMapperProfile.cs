@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using NetShip.DTOs;
 using NetShip.DTOs.Auth;
 using NetShip.DTOs.Branch;
 using NetShip.DTOs.Brand;
@@ -91,6 +92,41 @@ namespace NetShip.Utilities
 
             CreateMap<CreateBrandDTO, Brand>();
             CreateMap<Brand, BrandDTO>();
+
+            // Mapeo para InitCatalogDTO a Catalog
+            CreateMap<InitCatalogDTO, Catalog>()
+                .ForMember(dest => dest.Name, act => act.MapFrom(src => src.Name))
+                .ForMember(dest => dest.BranchId, act => act.MapFrom(src => src.BranchId))
+                // Asegúrate de configurar todas las propiedades necesarias aquí.
+                ;
+
+            // Mapeo para InitCategoryDTO a Category
+            CreateMap<InitCategoryDTO, Category>()
+                .ForMember(dest => dest.Name, act => act.MapFrom(src => src.Name))
+                .ForMember(dest => dest.CatalogId, act => act.MapFrom(src => src.CatalogId))
+                // Configura cualquier otra propiedad necesaria.
+                ;
+
+            // Mapeo para InitProductDTO a Product
+            CreateMap<InitProductDTO, Product>()
+                .ForMember(dest => dest.Alias, act => act.MapFrom(src => src.Alias))
+                .ForMember(dest => dest.CategoryId, act => act.MapFrom(src => src.CategoryId))
+                // Incluye cualquier otra configuración requerida para las propiedades.
+                ;
+
+            // Mapeo para InitModifiersGroupDTO a ModifiersGroup
+            CreateMap<InitModifiersGroupDTO, ModifiersGroup>()
+                .ForMember(dest => dest.Alias, act => act.MapFrom(src => src.Alias))
+                .ForMember(dest => dest.ProductId, act => act.MapFrom(src => src.ProductId))
+                // Añade aquí cualquier otra configuración de mapeo necesaria.
+                ;
+
+            // Mapeo para InitModifierDTO a Modifier
+            CreateMap<InitModifierDTO, Modifier>()
+                .ForMember(dest => dest.Alias, act => act.MapFrom(src => src.Alias))
+                .ForMember(dest => dest.Price, act => act.MapFrom(src => src.Price))
+                .ForMember(dest => dest.ModifiersGroupId, act => act.MapFrom(src => src.ModifiersGroupId))
+                ;
 
             CreateMap<UpBrandReqDTO, Brand>()
                 .ForMember(dest => dest.Logo, opt => opt.Ignore())

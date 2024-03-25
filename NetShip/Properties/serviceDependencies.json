@@ -1,9 +1,5 @@
 {
   "dependencies": {
-    "mssql1": {
-      "type": "mssql",
-      "connectionId": "ConnectionStrings:DefaultConnection"
-    },
     "apis1": {
       "ignored": "true",
       "type": "apis.azure"
@@ -11,6 +7,15 @@
     "identityapp1": {
       "ignored": "true",
       "type": "identityapp"
+    },
+    "postgresql1": {
+      "ignored": "true",
+      "type": "postgresql"
+    },
+    "mssql1": {
+      "type": "mssql",
+      "connectionId": "ConnectionStrings:DefaultConnection",
+      "dynamicId": null
     }
   }
 }

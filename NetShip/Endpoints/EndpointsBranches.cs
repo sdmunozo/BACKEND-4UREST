@@ -22,8 +22,8 @@ namespace NetShip.Endpoints
             group.MapPost("/generateBranchLink/{branchId:Guid}", generateBranchLink)
                 .WithName("GenerateBranchLink")
                 .Produces(StatusCodes.Status200OK)
-                .Produces(StatusCodes.Status404NotFound);
-            //.RequireAuthorization(); // Asegura que solo usuarios autorizados puedan acceder
+                .Produces(StatusCodes.Status404NotFound)
+                .RequireAuthorization();
 
             return group;
         }

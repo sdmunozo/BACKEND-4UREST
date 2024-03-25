@@ -1,942 +1,583 @@
-﻿CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
-    "MigrationId" character varying(150) NOT NULL,
-    "ProductVersion" character varying(32) NOT NULL,
-    CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY ("MigrationId")
-);
-
-START TRANSACTION;
-
-
-DO $EF$
+﻿IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
 BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240301190542_InitDB') THEN
-        IF NOT EXISTS(SELECT 1 FROM pg_namespace WHERE nspname = 'MasterBase') THEN
-            CREATE SCHEMA "MasterBase";
-        END IF;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240301190542_InitDB') THEN
-    CREATE TABLE "MasterBase"."Categories" (
-        "Id" uuid NOT NULL,
-        "Name" text NOT NULL,
-        "Icon" text,
-        "ParentId" uuid NOT NULL,
-        "Status" text NOT NULL,
-        CONSTRAINT "PK_Categories" PRIMARY KEY ("Id")
+    CREATE TABLE [__EFMigrationsHistory] (
+        [MigrationId] nvarchar(150) NOT NULL,
+        [ProductVersion] nvarchar(32) NOT NULL,
+        CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
     );
-    END IF;
-END $EF$;
+END;
+GO
 
-DO $EF$
+BEGIN TRANSACTION;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
 BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240301190542_InitDB') THEN
-    CREATE TABLE "MasterBase"."Products" (
-        "Id" uuid NOT NULL,
-        "Name" text NOT NULL,
-        "Alias" text NOT NULL,
-        "Icon" text,
-        "CategoryId" uuid NOT NULL,
-        "Status" text NOT NULL,
-        CONSTRAINT "PK_Products" PRIMARY KEY ("Id")
+    IF SCHEMA_ID(N'MasterBase') IS NULL EXEC(N'CREATE SCHEMA [MasterBase];');
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
+BEGIN
+    CREATE TABLE [MasterBase].[Roles] (
+        [Id] nvarchar(450) NOT NULL,
+        [Name] nvarchar(256) NULL,
+        [NormalizedName] nvarchar(256) NULL,
+        [ConcurrencyStamp] nvarchar(max) NULL,
+        CONSTRAINT [PK_Roles] PRIMARY KEY ([Id])
     );
-    END IF;
-END $EF$;
+END;
+GO
 
-DO $EF$
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
 BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240301190542_InitDB') THEN
-    CREATE TABLE "MasterBase"."Roles" (
-        "Id" text NOT NULL,
-        "Name" character varying(256),
-        "NormalizedName" character varying(256),
-        "ConcurrencyStamp" text,
-        CONSTRAINT "PK_Roles" PRIMARY KEY ("Id")
+    CREATE TABLE [MasterBase].[Users] (
+        [Id] nvarchar(450) NOT NULL,
+        [FirstName] nvarchar(max) NULL,
+        [LastName] nvarchar(max) NULL,
+        [DisableTutorial] bit NULL,
+        [ReferralLink] nvarchar(max) NULL,
+        [ReferredBy] nvarchar(max) NULL,
+        [UserName] nvarchar(256) NULL,
+        [NormalizedUserName] nvarchar(256) NULL,
+        [Email] nvarchar(256) NULL,
+        [NormalizedEmail] nvarchar(256) NULL,
+        [EmailConfirmed] bit NOT NULL,
+        [PasswordHash] nvarchar(max) NULL,
+        [SecurityStamp] nvarchar(max) NULL,
+        [ConcurrencyStamp] nvarchar(max) NULL,
+        [PhoneNumber] nvarchar(max) NULL,
+        [PhoneNumberConfirmed] bit NOT NULL,
+        [TwoFactorEnabled] bit NOT NULL,
+        [LockoutEnd] datetimeoffset NULL,
+        [LockoutEnabled] bit NOT NULL,
+        [AccessFailedCount] int NOT NULL,
+        CONSTRAINT [PK_Users] PRIMARY KEY ([Id])
     );
-    END IF;
-END $EF$;
+END;
+GO
 
-DO $EF$
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
 BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240301190542_InitDB') THEN
-    CREATE TABLE "MasterBase"."Users" (
-        "Id" text NOT NULL,
-        "FirstName" text,
-        "LastName" text,
-        "DisableTutorial" boolean,
-        "ReferralLink" text,
-        "ReferredBy" text,
-        "UserName" character varying(256),
-        "NormalizedUserName" character varying(256),
-        "Email" character varying(256),
-        "NormalizedEmail" character varying(256),
-        "EmailConfirmed" boolean NOT NULL,
-        "PasswordHash" text,
-        "SecurityStamp" text,
-        "ConcurrencyStamp" text,
-        "PhoneNumber" text,
-        "PhoneNumberConfirmed" boolean NOT NULL,
-        "TwoFactorEnabled" boolean NOT NULL,
-        "LockoutEnd" timestamp with time zone,
-        "LockoutEnabled" boolean NOT NULL,
-        "AccessFailedCount" integer NOT NULL,
-        CONSTRAINT "PK_Users" PRIMARY KEY ("Id")
+    CREATE TABLE [MasterBase].[RoleClaims] (
+        [Id] int NOT NULL IDENTITY,
+        [RoleId] nvarchar(450) NOT NULL,
+        [ClaimType] nvarchar(max) NULL,
+        [ClaimValue] nvarchar(max) NULL,
+        CONSTRAINT [PK_RoleClaims] PRIMARY KEY ([Id]),
+        CONSTRAINT [FK_RoleClaims_Roles_RoleId] FOREIGN KEY ([RoleId]) REFERENCES [MasterBase].[Roles] ([Id]) ON DELETE CASCADE
     );
-    END IF;
-END $EF$;
+END;
+GO
 
-DO $EF$
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
 BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240301190542_InitDB') THEN
-    CREATE TABLE "MasterBase"."RoleClaims" (
-        "Id" integer GENERATED BY DEFAULT AS IDENTITY,
-        "RoleId" text NOT NULL,
-        "ClaimType" text,
-        "ClaimValue" text,
-        CONSTRAINT "PK_RoleClaims" PRIMARY KEY ("Id"),
-        CONSTRAINT "FK_RoleClaims_Roles_RoleId" FOREIGN KEY ("RoleId") REFERENCES "MasterBase"."Roles" ("Id") ON DELETE CASCADE
+    CREATE TABLE [MasterBase].[Brands] (
+        [Id] uniqueidentifier NOT NULL,
+        [Name] nvarchar(max) NULL,
+        [UrlNormalizedName] nvarchar(max) NULL,
+        [Logo] nvarchar(max) NULL,
+        [Slogan] nvarchar(max) NULL,
+        [Instagram] nvarchar(max) NULL,
+        [Facebook] nvarchar(max) NULL,
+        [Website] nvarchar(max) NULL,
+        [CatalogsBackground] nvarchar(max) NULL,
+        [UserId] nvarchar(450) NOT NULL,
+        [ApplicationUserId] nvarchar(450) NULL,
+        CONSTRAINT [PK_Brands] PRIMARY KEY ([Id]),
+        CONSTRAINT [FK_Brands_Users_ApplicationUserId] FOREIGN KEY ([ApplicationUserId]) REFERENCES [MasterBase].[Users] ([Id]),
+        CONSTRAINT [FK_Brands_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [MasterBase].[Users] ([Id]) ON DELETE CASCADE
     );
-    END IF;
-END $EF$;
+END;
+GO
 
-DO $EF$
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
 BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240301190542_InitDB') THEN
-    CREATE TABLE "MasterBase"."Brands" (
-        "Id" uuid NOT NULL,
-        "Name" text NOT NULL,
-        "UserId" text NOT NULL,
-        "ApplicationUserId" text,
-        CONSTRAINT "PK_Brands" PRIMARY KEY ("Id"),
-        CONSTRAINT "FK_Brands_Users_ApplicationUserId" FOREIGN KEY ("ApplicationUserId") REFERENCES "MasterBase"."Users" ("Id"),
-        CONSTRAINT "FK_Brands_Users_UserId" FOREIGN KEY ("UserId") REFERENCES "MasterBase"."Users" ("Id") ON DELETE CASCADE
+    CREATE TABLE [MasterBase].[UserClaims] (
+        [Id] int NOT NULL IDENTITY,
+        [UserId] nvarchar(450) NOT NULL,
+        [ClaimType] nvarchar(max) NULL,
+        [ClaimValue] nvarchar(max) NULL,
+        CONSTRAINT [PK_UserClaims] PRIMARY KEY ([Id]),
+        CONSTRAINT [FK_UserClaims_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [MasterBase].[Users] ([Id]) ON DELETE CASCADE
     );
-    END IF;
-END $EF$;
+END;
+GO
 
-DO $EF$
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
 BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240301190542_InitDB') THEN
-    CREATE TABLE "MasterBase"."UserClaims" (
-        "Id" integer GENERATED BY DEFAULT AS IDENTITY,
-        "UserId" text NOT NULL,
-        "ClaimType" text,
-        "ClaimValue" text,
-        CONSTRAINT "PK_UserClaims" PRIMARY KEY ("Id"),
-        CONSTRAINT "FK_UserClaims_Users_UserId" FOREIGN KEY ("UserId") REFERENCES "MasterBase"."Users" ("Id") ON DELETE CASCADE
+    CREATE TABLE [MasterBase].[UserLogins] (
+        [LoginProvider] nvarchar(450) NOT NULL,
+        [ProviderKey] nvarchar(450) NOT NULL,
+        [ProviderDisplayName] nvarchar(max) NULL,
+        [UserId] nvarchar(450) NOT NULL,
+        CONSTRAINT [PK_UserLogins] PRIMARY KEY ([LoginProvider], [ProviderKey]),
+        CONSTRAINT [FK_UserLogins_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [MasterBase].[Users] ([Id]) ON DELETE CASCADE
     );
-    END IF;
-END $EF$;
+END;
+GO
 
-DO $EF$
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
 BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240301190542_InitDB') THEN
-    CREATE TABLE "MasterBase"."UserLogins" (
-        "LoginProvider" text NOT NULL,
-        "ProviderKey" text NOT NULL,
-        "ProviderDisplayName" text,
-        "UserId" text NOT NULL,
-        CONSTRAINT "PK_UserLogins" PRIMARY KEY ("LoginProvider", "ProviderKey"),
-        CONSTRAINT "FK_UserLogins_Users_UserId" FOREIGN KEY ("UserId") REFERENCES "MasterBase"."Users" ("Id") ON DELETE CASCADE
+    CREATE TABLE [MasterBase].[UserRoles] (
+        [UserId] nvarchar(450) NOT NULL,
+        [RoleId] nvarchar(450) NOT NULL,
+        CONSTRAINT [PK_UserRoles] PRIMARY KEY ([UserId], [RoleId]),
+        CONSTRAINT [FK_UserRoles_Roles_RoleId] FOREIGN KEY ([RoleId]) REFERENCES [MasterBase].[Roles] ([Id]) ON DELETE CASCADE,
+        CONSTRAINT [FK_UserRoles_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [MasterBase].[Users] ([Id]) ON DELETE CASCADE
     );
-    END IF;
-END $EF$;
+END;
+GO
 
-DO $EF$
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
 BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240301190542_InitDB') THEN
-    CREATE TABLE "MasterBase"."UserRoles" (
-        "UserId" text NOT NULL,
-        "RoleId" text NOT NULL,
-        CONSTRAINT "PK_UserRoles" PRIMARY KEY ("UserId", "RoleId"),
-        CONSTRAINT "FK_UserRoles_Roles_RoleId" FOREIGN KEY ("RoleId") REFERENCES "MasterBase"."Roles" ("Id") ON DELETE CASCADE,
-        CONSTRAINT "FK_UserRoles_Users_UserId" FOREIGN KEY ("UserId") REFERENCES "MasterBase"."Users" ("Id") ON DELETE CASCADE
+    CREATE TABLE [MasterBase].[UserTokens] (
+        [UserId] nvarchar(450) NOT NULL,
+        [LoginProvider] nvarchar(450) NOT NULL,
+        [Name] nvarchar(450) NOT NULL,
+        [Value] nvarchar(max) NULL,
+        CONSTRAINT [PK_UserTokens] PRIMARY KEY ([UserId], [LoginProvider], [Name]),
+        CONSTRAINT [FK_UserTokens_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [MasterBase].[Users] ([Id]) ON DELETE CASCADE
     );
-    END IF;
-END $EF$;
+END;
+GO
 
-DO $EF$
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
 BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240301190542_InitDB') THEN
-    CREATE TABLE "MasterBase"."UserTokens" (
-        "UserId" text NOT NULL,
-        "LoginProvider" text NOT NULL,
-        "Name" text NOT NULL,
-        "Value" text,
-        CONSTRAINT "PK_UserTokens" PRIMARY KEY ("UserId", "LoginProvider", "Name"),
-        CONSTRAINT "FK_UserTokens_Users_UserId" FOREIGN KEY ("UserId") REFERENCES "MasterBase"."Users" ("Id") ON DELETE CASCADE
+    CREATE TABLE [MasterBase].[Branches] (
+        [Id] uniqueidentifier NOT NULL,
+        [Name] nvarchar(max) NOT NULL,
+        [UrlNormalizedName] nvarchar(max) NOT NULL,
+        [NormalizedDigitalMenu] nvarchar(max) NULL,
+        [DigitalMenuLink] nvarchar(max) NULL,
+        [QrCodePath] nvarchar(max) NULL,
+        [BrandId] uniqueidentifier NOT NULL,
+        [DigitalMenuJson] nvarchar(max) NOT NULL,
+        CONSTRAINT [PK_Branches] PRIMARY KEY ([Id]),
+        CONSTRAINT [FK_Branches_Brands_BrandId] FOREIGN KEY ([BrandId]) REFERENCES [MasterBase].[Brands] ([Id]) ON DELETE CASCADE
     );
-    END IF;
-END $EF$;
+END;
+GO
 
-DO $EF$
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
 BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240301190542_InitDB') THEN
-    CREATE TABLE "MasterBase"."Branches" (
-        "Id" uuid NOT NULL,
-        "Name" text NOT NULL,
-        "BrandId" uuid NOT NULL,
-        CONSTRAINT "PK_Branches" PRIMARY KEY ("Id"),
-        CONSTRAINT "FK_Branches_Brands_BrandId" FOREIGN KEY ("BrandId") REFERENCES "MasterBase"."Brands" ("Id") ON DELETE CASCADE
+    CREATE TABLE [MasterBase].[Platforms] (
+        [Id] uniqueidentifier NOT NULL,
+        [Name] nvarchar(max) NULL,
+        [Alias] nvarchar(max) NULL,
+        [IsActive] bit NOT NULL,
+        [IsScheduleActive] bit NOT NULL,
+        [Sort] int NOT NULL,
+        [Icon] nvarchar(max) NULL,
+        [BrandId] uniqueidentifier NOT NULL,
+        CONSTRAINT [PK_Platforms] PRIMARY KEY ([Id]),
+        CONSTRAINT [FK_Platforms_Brands_BrandId] FOREIGN KEY ([BrandId]) REFERENCES [MasterBase].[Brands] ([Id]) ON DELETE CASCADE
     );
-    END IF;
-END $EF$;
+END;
+GO
 
-DO $EF$
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
 BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240301190542_InitDB') THEN
-    CREATE TABLE "MasterBase"."Catalogs" (
-        "Id" uuid NOT NULL,
-        "Name" text NOT NULL,
-        "Description" text NOT NULL,
-        "IsActive" boolean NOT NULL,
-        "IsScheduleActive" boolean NOT NULL,
-        "Sort" integer NOT NULL,
-        "BranchId" uuid NOT NULL,
-        "Icon" text,
-        CONSTRAINT "PK_Catalogs" PRIMARY KEY ("Id"),
-        CONSTRAINT "FK_Catalogs_Branches_BranchId" FOREIGN KEY ("BranchId") REFERENCES "MasterBase"."Branches" ("Id") ON DELETE CASCADE
+    CREATE TABLE [MasterBase].[Catalogs] (
+        [Id] uniqueidentifier NOT NULL,
+        [Name] nvarchar(max) NOT NULL,
+        [Description] nvarchar(max) NOT NULL,
+        [IsActive] bit NOT NULL,
+        [IsScheduleActive] bit NOT NULL,
+        [Sort] int NOT NULL,
+        [BranchId] uniqueidentifier NOT NULL,
+        [Icon] nvarchar(max) NULL,
+        CONSTRAINT [PK_Catalogs] PRIMARY KEY ([Id]),
+        CONSTRAINT [FK_Catalogs_Branches_BranchId] FOREIGN KEY ([BranchId]) REFERENCES [MasterBase].[Branches] ([Id]) ON DELETE CASCADE
     );
-    END IF;
-END $EF$;
+END;
+GO
 
-DO $EF$
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
 BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240301190542_InitDB') THEN
-    CREATE INDEX "IX_Branches_BrandId" ON "MasterBase"."Branches" ("BrandId");
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240301190542_InitDB') THEN
-    CREATE INDEX "IX_Brands_ApplicationUserId" ON "MasterBase"."Brands" ("ApplicationUserId");
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240301190542_InitDB') THEN
-    CREATE UNIQUE INDEX "IX_Brands_UserId" ON "MasterBase"."Brands" ("UserId");
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240301190542_InitDB') THEN
-    CREATE INDEX "IX_Catalogs_BranchId" ON "MasterBase"."Catalogs" ("BranchId");
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240301190542_InitDB') THEN
-    CREATE INDEX "IX_RoleClaims_RoleId" ON "MasterBase"."RoleClaims" ("RoleId");
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240301190542_InitDB') THEN
-    CREATE UNIQUE INDEX "RoleNameIndex" ON "MasterBase"."Roles" ("NormalizedName");
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240301190542_InitDB') THEN
-    CREATE INDEX "IX_UserClaims_UserId" ON "MasterBase"."UserClaims" ("UserId");
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240301190542_InitDB') THEN
-    CREATE INDEX "IX_UserLogins_UserId" ON "MasterBase"."UserLogins" ("UserId");
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240301190542_InitDB') THEN
-    CREATE INDEX "IX_UserRoles_RoleId" ON "MasterBase"."UserRoles" ("RoleId");
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240301190542_InitDB') THEN
-    CREATE INDEX "EmailIndex" ON "MasterBase"."Users" ("NormalizedEmail");
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240301190542_InitDB') THEN
-    CREATE UNIQUE INDEX "UserNameIndex" ON "MasterBase"."Users" ("NormalizedUserName");
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240301190542_InitDB') THEN
-    INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-    VALUES ('20240301190542_InitDB', '8.0.2');
-    END IF;
-END $EF$;
-COMMIT;
-
-START TRANSACTION;
-
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240316000314_AddUrlNormalizedNamToBrand') THEN
-    ALTER TABLE "MasterBase"."Brands" ADD "UrlNormalizedName" text NOT NULL DEFAULT '';
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240316000314_AddUrlNormalizedNamToBrand') THEN
-    ALTER TABLE "MasterBase"."Branches" ADD "UrlNormalizedName" text NOT NULL DEFAULT '';
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240316000314_AddUrlNormalizedNamToBrand') THEN
-    INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-    VALUES ('20240316000314_AddUrlNormalizedNamToBrand', '8.0.2');
-    END IF;
-END $EF$;
-COMMIT;
-
-START TRANSACTION;
-
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240316002403_AddDigitalMenuFieldsToBranch') THEN
-    ALTER TABLE "MasterBase"."Branches" ADD "DigitalMenuLink" text NOT NULL DEFAULT '';
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240316002403_AddDigitalMenuFieldsToBranch') THEN
-    ALTER TABLE "MasterBase"."Branches" ADD "QrCodePath" text NOT NULL DEFAULT '';
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240316002403_AddDigitalMenuFieldsToBranch') THEN
-    INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-    VALUES ('20240316002403_AddDigitalMenuFieldsToBranch', '8.0.2');
-    END IF;
-END $EF$;
-COMMIT;
-
-START TRANSACTION;
-
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240316004334_AllowNullForLinksAndQRCodes') THEN
-    ALTER TABLE "MasterBase"."Branches" ALTER COLUMN "QrCodePath" DROP NOT NULL;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240316004334_AllowNullForLinksAndQRCodes') THEN
-    ALTER TABLE "MasterBase"."Branches" ALTER COLUMN "DigitalMenuLink" DROP NOT NULL;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240316004334_AllowNullForLinksAndQRCodes') THEN
-    INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-    VALUES ('20240316004334_AllowNullForLinksAndQRCodes', '8.0.2');
-    END IF;
-END $EF$;
-COMMIT;
-
-START TRANSACTION;
-
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318191835_BrandFieldsUpdated') THEN
-    ALTER TABLE "MasterBase"."Brands" ADD "Facebook" text;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318191835_BrandFieldsUpdated') THEN
-    ALTER TABLE "MasterBase"."Brands" ADD "Instagram" text;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318191835_BrandFieldsUpdated') THEN
-    ALTER TABLE "MasterBase"."Brands" ADD "Logo" text;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318191835_BrandFieldsUpdated') THEN
-    ALTER TABLE "MasterBase"."Brands" ADD "Slogan" text;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318191835_BrandFieldsUpdated') THEN
-    ALTER TABLE "MasterBase"."Brands" ADD "Website" text;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318191835_BrandFieldsUpdated') THEN
-    ALTER TABLE "MasterBase"."Brands" ADD catalogs_background text;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318191835_BrandFieldsUpdated') THEN
-    INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-    VALUES ('20240318191835_BrandFieldsUpdated', '8.0.2');
-    END IF;
-END $EF$;
-COMMIT;
-
-START TRANSACTION;
-
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318193742_UpdateCategoryAndRelationWithCatalogs') THEN
-    ALTER TABLE "MasterBase"."Categories" DROP COLUMN "Status";
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318193742_UpdateCategoryAndRelationWithCatalogs') THEN
-    ALTER TABLE "MasterBase"."Categories" ADD "CatalogId" uuid NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000';
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318193742_UpdateCategoryAndRelationWithCatalogs') THEN
-    ALTER TABLE "MasterBase"."Categories" ADD "Description" text;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318193742_UpdateCategoryAndRelationWithCatalogs') THEN
-    ALTER TABLE "MasterBase"."Categories" ADD "IsActive" boolean NOT NULL DEFAULT FALSE;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318193742_UpdateCategoryAndRelationWithCatalogs') THEN
-    ALTER TABLE "MasterBase"."Categories" ADD "IsScheduleActive" boolean NOT NULL DEFAULT FALSE;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318193742_UpdateCategoryAndRelationWithCatalogs') THEN
-    ALTER TABLE "MasterBase"."Categories" ADD "Sort" integer NOT NULL DEFAULT 0;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318193742_UpdateCategoryAndRelationWithCatalogs') THEN
-    CREATE INDEX "IX_Categories_CatalogId" ON "MasterBase"."Categories" ("CatalogId");
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318193742_UpdateCategoryAndRelationWithCatalogs') THEN
-    ALTER TABLE "MasterBase"."Categories" ADD CONSTRAINT "FK_Categories_Catalogs_CatalogId" FOREIGN KEY ("CatalogId") REFERENCES "MasterBase"."Catalogs" ("Id") ON DELETE CASCADE;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318193742_UpdateCategoryAndRelationWithCatalogs') THEN
-    INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-    VALUES ('20240318193742_UpdateCategoryAndRelationWithCatalogs', '8.0.2');
-    END IF;
-END $EF$;
-COMMIT;
-
-START TRANSACTION;
-
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318194024_UpdateCategoryAndRelationWithCatalogs2') THEN
-    INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-    VALUES ('20240318194024_UpdateCategoryAndRelationWithCatalogs2', '8.0.2');
-    END IF;
-END $EF$;
-COMMIT;
-
-START TRANSACTION;
-
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318202323_UpdateCategoryAndRelationWithCatalogs3') THEN
-    INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-    VALUES ('20240318202323_UpdateCategoryAndRelationWithCatalogs3', '8.0.2');
-    END IF;
-END $EF$;
-COMMIT;
-
-START TRANSACTION;
-
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318211531_UpdateCategoryAndRelationWithCatalogs4') THEN
-    ALTER TABLE "MasterBase"."Brands" RENAME COLUMN catalogs_background TO "CatalogsBackground";
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318211531_UpdateCategoryAndRelationWithCatalogs4') THEN
-    INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-    VALUES ('20240318211531_UpdateCategoryAndRelationWithCatalogs4', '8.0.2');
-    END IF;
-END $EF$;
-COMMIT;
-
-START TRANSACTION;
-
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318212051_UpdateBrands') THEN
-    ALTER TABLE "MasterBase"."Brands" ALTER COLUMN "UrlNormalizedName" DROP NOT NULL;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318212051_UpdateBrands') THEN
-    ALTER TABLE "MasterBase"."Brands" ALTER COLUMN "Name" DROP NOT NULL;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318212051_UpdateBrands') THEN
-    INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-    VALUES ('20240318212051_UpdateBrands', '8.0.2');
-    END IF;
-END $EF$;
-COMMIT;
-
-START TRANSACTION;
-
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318221705_UpdateBrands1') THEN
-    INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-    VALUES ('20240318221705_UpdateBrands1', '8.0.2');
-    END IF;
-END $EF$;
-COMMIT;
-
-START TRANSACTION;
-
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318230751_CategoriesFieldsUpdated') THEN
-    ALTER TABLE "MasterBase"."Categories" DROP COLUMN "ParentId";
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240318230751_CategoriesFieldsUpdated') THEN
-    INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-    VALUES ('20240318230751_CategoriesFieldsUpdated', '8.0.2');
-    END IF;
-END $EF$;
-COMMIT;
-
-START TRANSACTION;
-
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319004405_CreateItemsTableAndRelationWithCategories') THEN
-    CREATE TABLE "MasterBase"."Items" (
-        "Id" uuid NOT NULL,
-        "Name" text,
-        "Alias" text,
-        "Description" text,
-        "IsActive" boolean NOT NULL,
-        "IsScheduleActive" boolean NOT NULL,
-        "Sort" integer NOT NULL,
-        "CategoryId" uuid NOT NULL,
-        "Icon" text,
-        CONSTRAINT "PK_Items" PRIMARY KEY ("Id"),
-        CONSTRAINT "FK_Items_Categories_CategoryId" FOREIGN KEY ("CategoryId") REFERENCES "MasterBase"."Categories" ("Id") ON DELETE CASCADE
+    CREATE TABLE [MasterBase].[Categories] (
+        [Id] uniqueidentifier NOT NULL,
+        [Name] nvarchar(max) NOT NULL,
+        [Description] nvarchar(max) NULL,
+        [IsActive] bit NOT NULL,
+        [IsScheduleActive] bit NOT NULL,
+        [Sort] int NOT NULL,
+        [CatalogId] uniqueidentifier NOT NULL,
+        [Icon] nvarchar(max) NULL,
+        CONSTRAINT [PK_Categories] PRIMARY KEY ([Id]),
+        CONSTRAINT [FK_Categories_Catalogs_CatalogId] FOREIGN KEY ([CatalogId]) REFERENCES [MasterBase].[Catalogs] ([Id]) ON DELETE CASCADE
     );
-    END IF;
-END $EF$;
+END;
+GO
 
-DO $EF$
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
 BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319004405_CreateItemsTableAndRelationWithCategories') THEN
-    CREATE INDEX "IX_Items_CategoryId" ON "MasterBase"."Items" ("CategoryId");
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319004405_CreateItemsTableAndRelationWithCategories') THEN
-    INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-    VALUES ('20240319004405_CreateItemsTableAndRelationWithCategories', '8.0.2');
-    END IF;
-END $EF$;
-COMMIT;
-
-START TRANSACTION;
-
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319010733_ProductsUpdated') THEN
-    ALTER TABLE "MasterBase"."Products" DROP COLUMN "Status";
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319010733_ProductsUpdated') THEN
-    ALTER TABLE "MasterBase"."Products" ALTER COLUMN "Name" DROP NOT NULL;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319010733_ProductsUpdated') THEN
-    ALTER TABLE "MasterBase"."Products" ALTER COLUMN "Alias" DROP NOT NULL;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319010733_ProductsUpdated') THEN
-    ALTER TABLE "MasterBase"."Products" ADD "Description" text;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319010733_ProductsUpdated') THEN
-    ALTER TABLE "MasterBase"."Products" ADD "IsActive" boolean NOT NULL DEFAULT FALSE;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319010733_ProductsUpdated') THEN
-    ALTER TABLE "MasterBase"."Products" ADD "IsScheduleActive" boolean NOT NULL DEFAULT FALSE;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319010733_ProductsUpdated') THEN
-    ALTER TABLE "MasterBase"."Products" ADD "Sort" integer NOT NULL DEFAULT 0;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319010733_ProductsUpdated') THEN
-    CREATE INDEX "IX_Products_CategoryId" ON "MasterBase"."Products" ("CategoryId");
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319010733_ProductsUpdated') THEN
-    ALTER TABLE "MasterBase"."Products" ADD CONSTRAINT "FK_Products_Categories_CategoryId" FOREIGN KEY ("CategoryId") REFERENCES "MasterBase"."Categories" ("Id") ON DELETE CASCADE;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319010733_ProductsUpdated') THEN
-    INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-    VALUES ('20240319010733_ProductsUpdated', '8.0.2');
-    END IF;
-END $EF$;
-COMMIT;
-
-START TRANSACTION;
-
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319014021_ModifiersAndPlatformUpdated') THEN
-    CREATE TABLE "MasterBase"."ModifiersGroups" (
-        "Id" uuid NOT NULL,
-        "ProductId" uuid NOT NULL,
-        "Name" text,
-        "Description" text,
-        "IsActive" boolean NOT NULL,
-        "IsScheduleActive" boolean NOT NULL,
-        "Sort" integer NOT NULL,
-        "Alias" text,
-        "Icon" text,
-        "MinModifiers" integer NOT NULL,
-        "MaxModifiers" integer NOT NULL,
-        CONSTRAINT "PK_ModifiersGroups" PRIMARY KEY ("Id"),
-        CONSTRAINT "FK_ModifiersGroups_Products_ProductId" FOREIGN KEY ("ProductId") REFERENCES "MasterBase"."Products" ("Id") ON DELETE CASCADE
+    CREATE TABLE [MasterBase].[Items] (
+        [Id] uniqueidentifier NOT NULL,
+        [Name] nvarchar(max) NULL,
+        [Alias] nvarchar(max) NULL,
+        [Description] nvarchar(max) NULL,
+        [IsActive] bit NOT NULL,
+        [IsScheduleActive] bit NOT NULL,
+        [Sort] int NOT NULL,
+        [CategoryId] uniqueidentifier NOT NULL,
+        [Icon] nvarchar(max) NULL,
+        [Price] decimal(18,2) NULL,
+        CONSTRAINT [PK_Items] PRIMARY KEY ([Id]),
+        CONSTRAINT [FK_Items_Categories_CategoryId] FOREIGN KEY ([CategoryId]) REFERENCES [MasterBase].[Categories] ([Id]) ON DELETE CASCADE
     );
-    END IF;
-END $EF$;
+END;
+GO
 
-DO $EF$
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
 BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319014021_ModifiersAndPlatformUpdated') THEN
-    CREATE TABLE "MasterBase"."Platforms" (
-        "Id" uuid NOT NULL,
-        "Name" text,
-        "Alias" text,
-        "IsActive" boolean NOT NULL,
-        "IsScheduleActive" boolean NOT NULL,
-        "Sort" integer NOT NULL,
-        "Icon" text,
-        "BrandId" uuid NOT NULL,
-        CONSTRAINT "PK_Platforms" PRIMARY KEY ("Id"),
-        CONSTRAINT "FK_Platforms_Brands_BrandId" FOREIGN KEY ("BrandId") REFERENCES "MasterBase"."Brands" ("Id") ON DELETE CASCADE
+    CREATE TABLE [MasterBase].[Products] (
+        [Id] uniqueidentifier NOT NULL,
+        [Name] nvarchar(max) NULL,
+        [Alias] nvarchar(max) NULL,
+        [Description] nvarchar(max) NULL,
+        [IsActive] bit NOT NULL,
+        [IsScheduleActive] bit NOT NULL,
+        [Sort] int NOT NULL,
+        [CategoryId] uniqueidentifier NOT NULL,
+        [Icon] nvarchar(max) NULL,
+        CONSTRAINT [PK_Products] PRIMARY KEY ([Id]),
+        CONSTRAINT [FK_Products_Categories_CategoryId] FOREIGN KEY ([CategoryId]) REFERENCES [MasterBase].[Categories] ([Id]) ON DELETE CASCADE
     );
-    END IF;
-END $EF$;
+END;
+GO
 
-DO $EF$
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
 BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319014021_ModifiersAndPlatformUpdated') THEN
-    CREATE TABLE "MasterBase"."Modifiers" (
-        "Id" uuid NOT NULL,
-        "ModifiersGroupId" uuid NOT NULL,
-        "Name" text,
-        "Alias" text,
-        "Description" text,
-        "IsActive" boolean NOT NULL,
-        "IsScheduleActive" boolean NOT NULL,
-        "Sort" integer NOT NULL,
-        "Icon" text,
-        "MinModifier" integer NOT NULL,
-        "MaxModifier" integer NOT NULL,
-        CONSTRAINT "PK_Modifiers" PRIMARY KEY ("Id"),
-        CONSTRAINT "FK_Modifiers_ModifiersGroups_ModifiersGroupId" FOREIGN KEY ("ModifiersGroupId") REFERENCES "MasterBase"."ModifiersGroups" ("Id") ON DELETE CASCADE
+    CREATE TABLE [MasterBase].[PricePerItemPerPlatforms] (
+        [ItemId] uniqueidentifier NOT NULL,
+        [PlatformId] uniqueidentifier NOT NULL,
+        [Id] uniqueidentifier NOT NULL,
+        [Price] float NULL,
+        [IsActive] bit NOT NULL,
+        [PlatformId1] uniqueidentifier NULL,
+        CONSTRAINT [PK_PricePerItemPerPlatforms] PRIMARY KEY ([PlatformId], [ItemId]),
+        CONSTRAINT [FK_PricePerItemPerPlatforms_Items_ItemId] FOREIGN KEY ([ItemId]) REFERENCES [MasterBase].[Items] ([Id]) ON DELETE NO ACTION,
+        CONSTRAINT [FK_PricePerItemPerPlatforms_Platforms_PlatformId] FOREIGN KEY ([PlatformId]) REFERENCES [MasterBase].[Platforms] ([Id]) ON DELETE NO ACTION,
+        CONSTRAINT [FK_PricePerItemPerPlatforms_Platforms_PlatformId1] FOREIGN KEY ([PlatformId1]) REFERENCES [MasterBase].[Platforms] ([Id])
     );
-    END IF;
-END $EF$;
+END;
+GO
 
-DO $EF$
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
 BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319014021_ModifiersAndPlatformUpdated') THEN
-    CREATE INDEX "IX_Modifiers_ModifiersGroupId" ON "MasterBase"."Modifiers" ("ModifiersGroupId");
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319014021_ModifiersAndPlatformUpdated') THEN
-    CREATE INDEX "IX_ModifiersGroups_ProductId" ON "MasterBase"."ModifiersGroups" ("ProductId");
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319014021_ModifiersAndPlatformUpdated') THEN
-    CREATE INDEX "IX_Platforms_BrandId" ON "MasterBase"."Platforms" ("BrandId");
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319014021_ModifiersAndPlatformUpdated') THEN
-    INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-    VALUES ('20240319014021_ModifiersAndPlatformUpdated', '8.0.2');
-    END IF;
-END $EF$;
-COMMIT;
-
-START TRANSACTION;
-
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319064715_Update') THEN
-    INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-    VALUES ('20240319064715_Update', '8.0.2');
-    END IF;
-END $EF$;
-COMMIT;
-
-START TRANSACTION;
-
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319183903_PricesPerPlatform') THEN
-    CREATE TABLE "MasterBase"."PricePerItemPerPlatforms" (
-        "ItemId" uuid NOT NULL,
-        "PlatformId" uuid NOT NULL,
-        "Id" uuid NOT NULL,
-        "Price" double precision,
-        "IsActive" boolean NOT NULL,
-        CONSTRAINT "PK_PricePerItemPerPlatforms" PRIMARY KEY ("PlatformId", "ItemId"),
-        CONSTRAINT "FK_PricePerItemPerPlatforms_Items_ItemId" FOREIGN KEY ("ItemId") REFERENCES "MasterBase"."Items" ("Id") ON DELETE CASCADE,
-        CONSTRAINT "FK_PricePerItemPerPlatforms_Platforms_PlatformId" FOREIGN KEY ("PlatformId") REFERENCES "MasterBase"."Platforms" ("Id") ON DELETE CASCADE
+    CREATE TABLE [MasterBase].[ModifiersGroups] (
+        [Id] uniqueidentifier NOT NULL,
+        [ProductId] uniqueidentifier NOT NULL,
+        [Name] nvarchar(max) NULL,
+        [Description] nvarchar(max) NULL,
+        [IsActive] bit NOT NULL,
+        [IsScheduleActive] bit NOT NULL,
+        [Sort] int NOT NULL,
+        [Alias] nvarchar(max) NULL,
+        [Icon] nvarchar(max) NULL,
+        [MinModifiers] int NOT NULL,
+        [MaxModifiers] int NOT NULL,
+        CONSTRAINT [PK_ModifiersGroups] PRIMARY KEY ([Id]),
+        CONSTRAINT [FK_ModifiersGroups_Products_ProductId] FOREIGN KEY ([ProductId]) REFERENCES [MasterBase].[Products] ([Id]) ON DELETE CASCADE
     );
-    END IF;
-END $EF$;
+END;
+GO
 
-DO $EF$
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
 BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319183903_PricesPerPlatform') THEN
-    CREATE TABLE "MasterBase"."PricePerModifierPerPlatforms" (
-        "ModifierId" uuid NOT NULL,
-        "PlatformId" uuid NOT NULL,
-        "Id" uuid NOT NULL,
-        "Price" double precision,
-        "IsActive" boolean NOT NULL,
-        CONSTRAINT "PK_PricePerModifierPerPlatforms" PRIMARY KEY ("PlatformId", "ModifierId"),
-        CONSTRAINT "FK_PricePerModifierPerPlatforms_Modifiers_ModifierId" FOREIGN KEY ("ModifierId") REFERENCES "MasterBase"."Modifiers" ("Id") ON DELETE CASCADE,
-        CONSTRAINT "FK_PricePerModifierPerPlatforms_Platforms_PlatformId" FOREIGN KEY ("PlatformId") REFERENCES "MasterBase"."Platforms" ("Id") ON DELETE CASCADE
+    CREATE TABLE [MasterBase].[Modifiers] (
+        [Id] uniqueidentifier NOT NULL,
+        [ModifiersGroupId] uniqueidentifier NOT NULL,
+        [Name] nvarchar(max) NULL,
+        [Alias] nvarchar(max) NULL,
+        [Description] nvarchar(max) NULL,
+        [IsActive] bit NOT NULL,
+        [IsScheduleActive] bit NOT NULL,
+        [Sort] int NOT NULL,
+        [Icon] nvarchar(max) NULL,
+        [MinModifier] int NOT NULL,
+        [MaxModifier] int NOT NULL,
+        [Price] decimal(18,2) NULL,
+        CONSTRAINT [PK_Modifiers] PRIMARY KEY ([Id]),
+        CONSTRAINT [FK_Modifiers_ModifiersGroups_ModifiersGroupId] FOREIGN KEY ([ModifiersGroupId]) REFERENCES [MasterBase].[ModifiersGroups] ([Id]) ON DELETE CASCADE
     );
-    END IF;
-END $EF$;
+END;
+GO
 
-DO $EF$
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
 BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319183903_PricesPerPlatform') THEN
-    CREATE INDEX "IX_PricePerItemPerPlatforms_ItemId" ON "MasterBase"."PricePerItemPerPlatforms" ("ItemId");
-    END IF;
-END $EF$;
+    CREATE TABLE [MasterBase].[PricePerModifierPerPlatforms] (
+        [ModifierId] uniqueidentifier NOT NULL,
+        [PlatformId] uniqueidentifier NOT NULL,
+        [Id] uniqueidentifier NOT NULL,
+        [Price] float NULL,
+        [IsActive] bit NOT NULL,
+        [PlatformId1] uniqueidentifier NULL,
+        CONSTRAINT [PK_PricePerModifierPerPlatforms] PRIMARY KEY ([PlatformId], [ModifierId]),
+        CONSTRAINT [FK_PricePerModifierPerPlatforms_Modifiers_ModifierId] FOREIGN KEY ([ModifierId]) REFERENCES [MasterBase].[Modifiers] ([Id]) ON DELETE NO ACTION,
+        CONSTRAINT [FK_PricePerModifierPerPlatforms_Platforms_PlatformId] FOREIGN KEY ([PlatformId]) REFERENCES [MasterBase].[Platforms] ([Id]) ON DELETE NO ACTION,
+        CONSTRAINT [FK_PricePerModifierPerPlatforms_Platforms_PlatformId1] FOREIGN KEY ([PlatformId1]) REFERENCES [MasterBase].[Platforms] ([Id])
+    );
+END;
+GO
 
-DO $EF$
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
 BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319183903_PricesPerPlatform') THEN
-    CREATE INDEX "IX_PricePerModifierPerPlatforms_ModifierId" ON "MasterBase"."PricePerModifierPerPlatforms" ("ModifierId");
-    END IF;
-END $EF$;
+    CREATE INDEX [IX_Branches_BrandId] ON [MasterBase].[Branches] ([BrandId]);
+END;
+GO
 
-DO $EF$
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
 BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240319183903_PricesPerPlatform') THEN
-    INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-    VALUES ('20240319183903_PricesPerPlatform', '8.0.2');
-    END IF;
-END $EF$;
+    CREATE INDEX [IX_Brands_ApplicationUserId] ON [MasterBase].[Brands] ([ApplicationUserId]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
+BEGIN
+    CREATE UNIQUE INDEX [IX_Brands_UserId] ON [MasterBase].[Brands] ([UserId]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
+BEGIN
+    CREATE INDEX [IX_Catalogs_BranchId] ON [MasterBase].[Catalogs] ([BranchId]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
+BEGIN
+    CREATE INDEX [IX_Categories_CatalogId] ON [MasterBase].[Categories] ([CatalogId]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
+BEGIN
+    CREATE INDEX [IX_Items_CategoryId] ON [MasterBase].[Items] ([CategoryId]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
+BEGIN
+    CREATE INDEX [IX_Modifiers_ModifiersGroupId] ON [MasterBase].[Modifiers] ([ModifiersGroupId]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
+BEGIN
+    CREATE INDEX [IX_ModifiersGroups_ProductId] ON [MasterBase].[ModifiersGroups] ([ProductId]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
+BEGIN
+    CREATE INDEX [IX_Platforms_BrandId] ON [MasterBase].[Platforms] ([BrandId]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
+BEGIN
+    CREATE INDEX [IX_PricePerItemPerPlatforms_ItemId] ON [MasterBase].[PricePerItemPerPlatforms] ([ItemId]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
+BEGIN
+    CREATE INDEX [IX_PricePerItemPerPlatforms_PlatformId1] ON [MasterBase].[PricePerItemPerPlatforms] ([PlatformId1]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
+BEGIN
+    CREATE INDEX [IX_PricePerModifierPerPlatforms_ModifierId] ON [MasterBase].[PricePerModifierPerPlatforms] ([ModifierId]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
+BEGIN
+    CREATE INDEX [IX_PricePerModifierPerPlatforms_PlatformId1] ON [MasterBase].[PricePerModifierPerPlatforms] ([PlatformId1]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
+BEGIN
+    CREATE INDEX [IX_Products_CategoryId] ON [MasterBase].[Products] ([CategoryId]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
+BEGIN
+    CREATE INDEX [IX_RoleClaims_RoleId] ON [MasterBase].[RoleClaims] ([RoleId]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
+BEGIN
+    EXEC(N'CREATE UNIQUE INDEX [RoleNameIndex] ON [MasterBase].[Roles] ([NormalizedName]) WHERE [NormalizedName] IS NOT NULL');
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
+BEGIN
+    CREATE INDEX [IX_UserClaims_UserId] ON [MasterBase].[UserClaims] ([UserId]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
+BEGIN
+    CREATE INDEX [IX_UserLogins_UserId] ON [MasterBase].[UserLogins] ([UserId]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
+BEGIN
+    CREATE INDEX [IX_UserRoles_RoleId] ON [MasterBase].[UserRoles] ([RoleId]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
+BEGIN
+    CREATE INDEX [EmailIndex] ON [MasterBase].[Users] ([NormalizedEmail]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
+BEGIN
+    EXEC(N'CREATE UNIQUE INDEX [UserNameIndex] ON [MasterBase].[Users] ([NormalizedUserName]) WHERE [NormalizedUserName] IS NOT NULL');
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240323195711_initDB'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20240323195711_initDB', N'8.0.3');
+END;
+GO
+
 COMMIT;
-
-START TRANSACTION;
-
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240320012813_NavProp') THEN
-    INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-    VALUES ('20240320012813_NavProp', '8.0.2');
-    END IF;
-END $EF$;
-COMMIT;
-
-START TRANSACTION;
-
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240320035823_normalizedDigitalMenuAdded') THEN
-    ALTER TABLE "MasterBase"."Branches" ADD "NormalizedDigitalMenu" text;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240320035823_normalizedDigitalMenuAdded') THEN
-    INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-    VALUES ('20240320035823_normalizedDigitalMenuAdded', '8.0.2');
-    END IF;
-END $EF$;
-COMMIT;
-
-START TRANSACTION;
-
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240321055714_dmjsonAdded') THEN
-    ALTER TABLE "MasterBase"."Branches" ADD "DigitalMenuJson" text NOT NULL DEFAULT '';
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240321055714_dmjsonAdded') THEN
-    INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-    VALUES ('20240321055714_dmjsonAdded', '8.0.2');
-    END IF;
-END $EF$;
-COMMIT;
-
-START TRANSACTION;
-
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240323000727_priceAdded') THEN
-    ALTER TABLE "MasterBase"."Modifiers" ADD "Price" numeric;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240323000727_priceAdded') THEN
-    ALTER TABLE "MasterBase"."Items" ADD "Price" numeric;
-    END IF;
-END $EF$;
-
-DO $EF$
-BEGIN
-    IF NOT EXISTS(SELECT 1 FROM "__EFMigrationsHistory" WHERE "MigrationId" = '20240323000727_priceAdded') THEN
-    INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-    VALUES ('20240323000727_priceAdded', '8.0.2');
-    END IF;
-END $EF$;
-COMMIT;
+GO
 
