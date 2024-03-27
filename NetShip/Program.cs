@@ -55,7 +55,8 @@ builder.Services.AddScoped<IModifiersRepository, ModifiersRepository>();
 
 builder.Services.AddScoped<QrCodeService>();
 
-builder.Services.AddScoped<IFileStorage, FileLocalStorage>();
+//builder.Services.AddScoped<IFileStorage, FileLocalStorage>();
+builder.Services.AddScoped<IFileStorage, FileAzureStorage>();
 builder.Services.AddTransient<IUserServices, UserServices>();
 builder.Services.AddHttpContextAccessor();
 

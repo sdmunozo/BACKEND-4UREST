@@ -581,3 +581,311 @@ GO
 COMMIT;
 GO
 
+BEGIN TRANSACTION;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240324061049_CatalogsInitit'
+)
+BEGIN
+    DECLARE @var0 sysname;
+    SELECT @var0 = [d].[name]
+    FROM [sys].[default_constraints] [d]
+    INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+    WHERE ([d].[parent_object_id] = OBJECT_ID(N'[MasterBase].[Catalogs]') AND [c].[name] = N'Name');
+    IF @var0 IS NOT NULL EXEC(N'ALTER TABLE [MasterBase].[Catalogs] DROP CONSTRAINT [' + @var0 + '];');
+    ALTER TABLE [MasterBase].[Catalogs] ALTER COLUMN [Name] nvarchar(max) NULL;
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240324061049_CatalogsInitit'
+)
+BEGIN
+    DECLARE @var1 sysname;
+    SELECT @var1 = [d].[name]
+    FROM [sys].[default_constraints] [d]
+    INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+    WHERE ([d].[parent_object_id] = OBJECT_ID(N'[MasterBase].[Catalogs]') AND [c].[name] = N'Description');
+    IF @var1 IS NOT NULL EXEC(N'ALTER TABLE [MasterBase].[Catalogs] DROP CONSTRAINT [' + @var1 + '];');
+    ALTER TABLE [MasterBase].[Catalogs] ALTER COLUMN [Description] nvarchar(max) NULL;
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240324061049_CatalogsInitit'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20240324061049_CatalogsInitit', N'8.0.3');
+END;
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240327213347_localDB'
+)
+BEGIN
+    ALTER TABLE [MasterBase].[Products] ADD [Price] decimal(18,2) NULL;
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240327213347_localDB'
+)
+BEGIN
+    ALTER TABLE [MasterBase].[ModifiersGroups] ADD [showPrices] bit NOT NULL DEFAULT CAST(0 AS bit);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240327213347_localDB'
+)
+BEGIN
+    DECLARE @var2 sysname;
+    SELECT @var2 = [d].[name]
+    FROM [sys].[default_constraints] [d]
+    INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+    WHERE ([d].[parent_object_id] = OBJECT_ID(N'[MasterBase].[Categories]') AND [c].[name] = N'Icon');
+    IF @var2 IS NOT NULL EXEC(N'ALTER TABLE [MasterBase].[Categories] DROP CONSTRAINT [' + @var2 + '];');
+    EXEC(N'UPDATE [MasterBase].[Categories] SET [Icon] = N'''' WHERE [Icon] IS NULL');
+    ALTER TABLE [MasterBase].[Categories] ALTER COLUMN [Icon] nvarchar(max) NOT NULL;
+    ALTER TABLE [MasterBase].[Categories] ADD DEFAULT N'' FOR [Icon];
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240327213347_localDB'
+)
+BEGIN
+    DECLARE @var3 sysname;
+    SELECT @var3 = [d].[name]
+    FROM [sys].[default_constraints] [d]
+    INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+    WHERE ([d].[parent_object_id] = OBJECT_ID(N'[MasterBase].[Categories]') AND [c].[name] = N'Description');
+    IF @var3 IS NOT NULL EXEC(N'ALTER TABLE [MasterBase].[Categories] DROP CONSTRAINT [' + @var3 + '];');
+    EXEC(N'UPDATE [MasterBase].[Categories] SET [Description] = N'''' WHERE [Description] IS NULL');
+    ALTER TABLE [MasterBase].[Categories] ALTER COLUMN [Description] nvarchar(max) NOT NULL;
+    ALTER TABLE [MasterBase].[Categories] ADD DEFAULT N'' FOR [Description];
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240327213347_localDB'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20240327213347_localDB', N'8.0.3');
+END;
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240327213946_localDB2'
+)
+BEGIN
+    EXEC sp_rename N'[MasterBase].[ModifiersGroups].[showPrices]', N'isSelectable', N'COLUMN';
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240327213946_localDB2'
+)
+BEGIN
+    DECLARE @var4 sysname;
+    SELECT @var4 = [d].[name]
+    FROM [sys].[default_constraints] [d]
+    INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+    WHERE ([d].[parent_object_id] = OBJECT_ID(N'[MasterBase].[Products]') AND [c].[name] = N'Price');
+    IF @var4 IS NOT NULL EXEC(N'ALTER TABLE [MasterBase].[Products] DROP CONSTRAINT [' + @var4 + '];');
+    EXEC(N'UPDATE [MasterBase].[Products] SET [Price] = 0.0 WHERE [Price] IS NULL');
+    ALTER TABLE [MasterBase].[Products] ALTER COLUMN [Price] decimal(18,2) NOT NULL;
+    ALTER TABLE [MasterBase].[Products] ADD DEFAULT 0.0 FOR [Price];
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240327213946_localDB2'
+)
+BEGIN
+    DECLARE @var5 sysname;
+    SELECT @var5 = [d].[name]
+    FROM [sys].[default_constraints] [d]
+    INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+    WHERE ([d].[parent_object_id] = OBJECT_ID(N'[MasterBase].[Products]') AND [c].[name] = N'Name');
+    IF @var5 IS NOT NULL EXEC(N'ALTER TABLE [MasterBase].[Products] DROP CONSTRAINT [' + @var5 + '];');
+    EXEC(N'UPDATE [MasterBase].[Products] SET [Name] = N'''' WHERE [Name] IS NULL');
+    ALTER TABLE [MasterBase].[Products] ALTER COLUMN [Name] nvarchar(max) NOT NULL;
+    ALTER TABLE [MasterBase].[Products] ADD DEFAULT N'' FOR [Name];
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240327213946_localDB2'
+)
+BEGIN
+    DECLARE @var6 sysname;
+    SELECT @var6 = [d].[name]
+    FROM [sys].[default_constraints] [d]
+    INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+    WHERE ([d].[parent_object_id] = OBJECT_ID(N'[MasterBase].[Products]') AND [c].[name] = N'Icon');
+    IF @var6 IS NOT NULL EXEC(N'ALTER TABLE [MasterBase].[Products] DROP CONSTRAINT [' + @var6 + '];');
+    EXEC(N'UPDATE [MasterBase].[Products] SET [Icon] = N'''' WHERE [Icon] IS NULL');
+    ALTER TABLE [MasterBase].[Products] ALTER COLUMN [Icon] nvarchar(max) NOT NULL;
+    ALTER TABLE [MasterBase].[Products] ADD DEFAULT N'' FOR [Icon];
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240327213946_localDB2'
+)
+BEGIN
+    DECLARE @var7 sysname;
+    SELECT @var7 = [d].[name]
+    FROM [sys].[default_constraints] [d]
+    INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+    WHERE ([d].[parent_object_id] = OBJECT_ID(N'[MasterBase].[Products]') AND [c].[name] = N'Description');
+    IF @var7 IS NOT NULL EXEC(N'ALTER TABLE [MasterBase].[Products] DROP CONSTRAINT [' + @var7 + '];');
+    EXEC(N'UPDATE [MasterBase].[Products] SET [Description] = N'''' WHERE [Description] IS NULL');
+    ALTER TABLE [MasterBase].[Products] ALTER COLUMN [Description] nvarchar(max) NOT NULL;
+    ALTER TABLE [MasterBase].[Products] ADD DEFAULT N'' FOR [Description];
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240327213946_localDB2'
+)
+BEGIN
+    DECLARE @var8 sysname;
+    SELECT @var8 = [d].[name]
+    FROM [sys].[default_constraints] [d]
+    INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+    WHERE ([d].[parent_object_id] = OBJECT_ID(N'[MasterBase].[Products]') AND [c].[name] = N'Alias');
+    IF @var8 IS NOT NULL EXEC(N'ALTER TABLE [MasterBase].[Products] DROP CONSTRAINT [' + @var8 + '];');
+    EXEC(N'UPDATE [MasterBase].[Products] SET [Alias] = N'''' WHERE [Alias] IS NULL');
+    ALTER TABLE [MasterBase].[Products] ALTER COLUMN [Alias] nvarchar(max) NOT NULL;
+    ALTER TABLE [MasterBase].[Products] ADD DEFAULT N'' FOR [Alias];
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240327213946_localDB2'
+)
+BEGIN
+    DECLARE @var9 sysname;
+    SELECT @var9 = [d].[name]
+    FROM [sys].[default_constraints] [d]
+    INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+    WHERE ([d].[parent_object_id] = OBJECT_ID(N'[MasterBase].[ModifiersGroups]') AND [c].[name] = N'Name');
+    IF @var9 IS NOT NULL EXEC(N'ALTER TABLE [MasterBase].[ModifiersGroups] DROP CONSTRAINT [' + @var9 + '];');
+    EXEC(N'UPDATE [MasterBase].[ModifiersGroups] SET [Name] = N'''' WHERE [Name] IS NULL');
+    ALTER TABLE [MasterBase].[ModifiersGroups] ALTER COLUMN [Name] nvarchar(max) NOT NULL;
+    ALTER TABLE [MasterBase].[ModifiersGroups] ADD DEFAULT N'' FOR [Name];
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240327213946_localDB2'
+)
+BEGIN
+    DECLARE @var10 sysname;
+    SELECT @var10 = [d].[name]
+    FROM [sys].[default_constraints] [d]
+    INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+    WHERE ([d].[parent_object_id] = OBJECT_ID(N'[MasterBase].[ModifiersGroups]') AND [c].[name] = N'Icon');
+    IF @var10 IS NOT NULL EXEC(N'ALTER TABLE [MasterBase].[ModifiersGroups] DROP CONSTRAINT [' + @var10 + '];');
+    EXEC(N'UPDATE [MasterBase].[ModifiersGroups] SET [Icon] = N'''' WHERE [Icon] IS NULL');
+    ALTER TABLE [MasterBase].[ModifiersGroups] ALTER COLUMN [Icon] nvarchar(max) NOT NULL;
+    ALTER TABLE [MasterBase].[ModifiersGroups] ADD DEFAULT N'' FOR [Icon];
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240327213946_localDB2'
+)
+BEGIN
+    DECLARE @var11 sysname;
+    SELECT @var11 = [d].[name]
+    FROM [sys].[default_constraints] [d]
+    INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+    WHERE ([d].[parent_object_id] = OBJECT_ID(N'[MasterBase].[ModifiersGroups]') AND [c].[name] = N'Description');
+    IF @var11 IS NOT NULL EXEC(N'ALTER TABLE [MasterBase].[ModifiersGroups] DROP CONSTRAINT [' + @var11 + '];');
+    EXEC(N'UPDATE [MasterBase].[ModifiersGroups] SET [Description] = N'''' WHERE [Description] IS NULL');
+    ALTER TABLE [MasterBase].[ModifiersGroups] ALTER COLUMN [Description] nvarchar(max) NOT NULL;
+    ALTER TABLE [MasterBase].[ModifiersGroups] ADD DEFAULT N'' FOR [Description];
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240327213946_localDB2'
+)
+BEGIN
+    DECLARE @var12 sysname;
+    SELECT @var12 = [d].[name]
+    FROM [sys].[default_constraints] [d]
+    INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+    WHERE ([d].[parent_object_id] = OBJECT_ID(N'[MasterBase].[ModifiersGroups]') AND [c].[name] = N'Alias');
+    IF @var12 IS NOT NULL EXEC(N'ALTER TABLE [MasterBase].[ModifiersGroups] DROP CONSTRAINT [' + @var12 + '];');
+    EXEC(N'UPDATE [MasterBase].[ModifiersGroups] SET [Alias] = N'''' WHERE [Alias] IS NULL');
+    ALTER TABLE [MasterBase].[ModifiersGroups] ALTER COLUMN [Alias] nvarchar(max) NOT NULL;
+    ALTER TABLE [MasterBase].[ModifiersGroups] ADD DEFAULT N'' FOR [Alias];
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240327213946_localDB2'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20240327213946_localDB2', N'8.0.3');
+END;
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240327215809_localDB3'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20240327215809_localDB3', N'8.0.3');
+END;
+GO
+
+COMMIT;
+GO
+

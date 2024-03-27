@@ -3,10 +3,11 @@
     public class ProductDTO
     {
         public Guid Id { get; set; }
-        public string Name { get; set; } = null!;
-        public string Alias { get; set; } = null!;
-        public string? Icon { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Alias { get; set; } = string.Empty;
+        public string Icon { get; set; } = string.Empty;
+        public decimal Price { get; set; } = 0;
         public Guid CategoryId { get; set; }
-        public string Status { get; set; } = "Activo";
+        public bool IsActive { get; set; } = true;
     }
 }

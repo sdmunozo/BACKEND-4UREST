@@ -4,14 +4,15 @@
     {
         public Guid Id { get; set; }
         public Guid ProductId { get; set; }
-        public string? Name { get; set; }
-        public string? Description { get; set; }
-        public bool IsActive { get; set; }
-        public bool IsScheduleActive { get; set; }
-        public int Sort { get; set; }
-        public string? Alias { get; set; }
-        public string? Icon { get; set; }
-        public int MinModifiers { get; set; }
-        public int MaxModifiers { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public bool IsActive { get; set; } = true;
+        public bool IsScheduleActive { get; set; } = false;
+        public int Sort { get; set; } = -1;
+        public string Alias { get; set; } = string.Empty;
+        public string Icon { get; set; } = string.Empty;
+        public bool isSelectable { get; set; } = false;
+        public int MinModifiers { get; set; } = -1;
+        public int MaxModifiers { get; set; } = -1;
     }
 }

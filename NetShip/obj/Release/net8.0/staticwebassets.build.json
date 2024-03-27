@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "hfYm9LGWmVMTOoDqSzQzzRFXsBLmAqC+D+Evs8+MDaA=",
+  "Hash": "Ps2OSAR60j70BWFrb1li1TNpDVmFZU+5f8oZ/7xJVYk=",
   "Source": "NetShip",
   "BasePath": "_content/NetShip",
   "Mode": "Default",
@@ -1478,6 +1478,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\qrcodes\\009d2d9e-31ae-4200-887a-05ffa218005d.png"
+    },
+    {
+      "Identity": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\qrcodes\\396a3271-44cc-4d4d-a833-08dc4eb48c27.png",
+      "SourceId": "NetShip",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\",
+      "BasePath": "_content/NetShip",
+      "RelativePath": "qrcodes/396a3271-44cc-4d4d-a833-08dc4eb48c27.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\qrcodes\\396a3271-44cc-4d4d-a833-08dc4eb48c27.png"
     },
     {
       "Identity": "C:\\Users\\USER\\Desktop\\dev\\BACKEND\\NetShip\\NetShip\\wwwroot\\qrcodes\\4327c66a-8545-40d0-87aa-70bae0c6450b.png",

@@ -14,20 +14,20 @@
 
     public class InitProductDTO
     {
-        public string? Alias { get; set; } = string.Empty;
+        public string Alias { get; set; } = string.Empty;
         public Guid CategoryId { get; set; }
     }
 
     public class InitModifiersGroupDTO
     {
-        public string? Alias { get; set; } = string.Empty;
+        public string Alias { get; set; } = string.Empty;
         public Guid ProductId { get; set; }
     }
 
     public class InitModifierDTO
     {
-        public string? Alias { get; set; } = string.Empty;
-        public string? Price { get; set; } = string.Empty;
+        public string Alias { get; set; } = string.Empty;
+        public string Price { get; set; } = string.Empty;
         public Guid ModifiersGroupId { get; set; }
     }
 }

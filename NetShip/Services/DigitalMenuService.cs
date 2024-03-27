@@ -251,6 +251,7 @@ namespace NetShip.Services
                     Alias = product.Alias ?? string.Empty,
                     Description = product.Description ?? string.Empty,
                     Icon = product.Icon ?? string.Empty,
+                    Price = product.Price.ToString() ?? string.Empty,
                     ModifiersGroups = new List<DTOs.DigitalMenu.ModifiersGroup>()
                 });
             }
@@ -340,6 +341,7 @@ namespace NetShip.Services
                     Alias = modifiersGroup.Alias ?? "",
                     Description = modifiersGroup.Description ?? "",
                     Icon = modifiersGroup.Icon ?? "",
+                    isSelectable = modifiersGroup.isSelectable.ToString() ?? "",
                     Modifiers = new List<DTOs.DigitalMenu.Modifier>()
                 });
             }
