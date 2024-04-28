@@ -49,10 +49,12 @@ builder.Services.AddScoped<IItemsRepository, ItemsRepository>();
 builder.Services.AddScoped<IPlatformsRepository, PlatformsRepository>();
 builder.Services.AddScoped<IModifiersGroupsRepository, ModifiersGroupsRepository>();
 builder.Services.AddScoped<IModifiersRepository, ModifiersRepository>();
+builder.Services.AddScoped<IDigitalMenuRepository, DigitalMenuRepository>();
+builder.Services.AddScoped<ILandingUserEventRepository, LandingUserEventRepository>();
 
 
 
-
+builder.Services.AddHttpClient<ChatService>();
 builder.Services.AddScoped<QrCodeService>();
 
 //builder.Services.AddScoped<IFileStorage, FileLocalStorage>();
@@ -117,6 +119,7 @@ app.MapGroup("/api/platform").MapPlatforms();
 app.MapGroup("/api/modifiersGroup").MapModifiersGroups();
 app.MapGroup("/api/modifier").MapModifiers();
 app.MapGroup("/api/digital-menu").MapDigitalMenu();
+app.MapGroup("/api/langind").MapLandingUserEvents();
 
 
 

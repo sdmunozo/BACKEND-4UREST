@@ -392,6 +392,100 @@ namespace NetShip.Migrations
                     b.ToTable("Categories", "MasterBase");
                 });
 
+            modelBuilder.Entity("NetShip.Entities.DeviceTracking", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BranchId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Browser")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BrowserVersion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OS")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Orientation")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("PixelRatio")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Platform")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ScreenHeight")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ScreenWidth")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SessionId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserAgent")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Vendor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
+
+                    b.ToTable("DeviceTrackings", "MasterBase");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.Feedback", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BranchId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SessionId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
+
+                    b.ToTable("Feedbacks", "MasterBase");
+                });
+
             modelBuilder.Entity("NetShip.Entities.Item", b =>
                 {
                     b.Property<Guid>("Id")
@@ -430,6 +524,31 @@ namespace NetShip.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Items", "MasterBase");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.LandingUserEvent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("EventTimestamp")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("EventType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SessionId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LandingUserEvents", "MasterBase");
                 });
 
             modelBuilder.Entity("NetShip.Entities.Modifier", b =>
@@ -764,6 +883,28 @@ namespace NetShip.Migrations
                     b.Navigation("Catalog");
                 });
 
+            modelBuilder.Entity("NetShip.Entities.DeviceTracking", b =>
+                {
+                    b.HasOne("NetShip.Entities.Branch", "Branch")
+                        .WithMany("DeviceTracking")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.Feedback", b =>
+                {
+                    b.HasOne("NetShip.Entities.Branch", "Branch")
+                        .WithMany("Feedback")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
+                });
+
             modelBuilder.Entity("NetShip.Entities.Item", b =>
                 {
                     b.HasOne("NetShip.Entities.Category", "Category")
@@ -773,6 +914,94 @@ namespace NetShip.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("NetShip.Entities.LandingUserEvent", b =>
+                {
+                    b.OwnsOne("NetShip.Entities.EventDetails", "Details", b1 =>
+                        {
+                            b1.Property<Guid>("LandingUserEventId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<int?>("Duration")
+                                .HasColumnType("int")
+                                .HasColumnName("Duration");
+
+                            b1.Property<string>("FAQId")
+                                .HasMaxLength(128)
+                                .HasColumnType("nvarchar(128)")
+                                .HasColumnName("FAQId");
+
+                            b1.Property<int?>("FaqViewSecondsElapsed")
+                                .HasColumnType("int")
+                                .HasColumnName("FaqViewSecondsElapsed");
+
+                            b1.Property<int?>("ForWhoViewSecondsElapsed")
+                                .HasColumnType("int")
+                                .HasColumnName("ForWhoViewSecondsElapsed");
+
+                            b1.Property<string>("ImageId")
+                                .HasMaxLength(128)
+                                .HasColumnType("nvarchar(128)")
+                                .HasColumnName("ImageId");
+
+                            b1.Property<string>("LinkDestination")
+                                .HasMaxLength(256)
+                                .HasColumnType("nvarchar(256)")
+                                .HasColumnName("LinkDestination");
+
+                            b1.Property<string>("LinkLabel")
+                                .HasMaxLength(256)
+                                .HasColumnType("nvarchar(256)")
+                                .HasColumnName("LinkLabel");
+
+                            b1.Property<int?>("MenuHighlightsViewSecondsElapsed")
+                                .HasColumnType("int")
+                                .HasColumnName("MenuHighlightsViewSecondsElapsed");
+
+                            b1.Property<int?>("MenuScreensViewSecondsElapsed")
+                                .HasColumnType("int")
+                                .HasColumnName("MenuScreensViewSecondsElapsed");
+
+                            b1.Property<int?>("PlaybackTime")
+                                .HasColumnType("int")
+                                .HasColumnName("PlaybackTime");
+
+                            b1.Property<int?>("PresentationViewSecondsElapsed")
+                                .HasColumnType("int")
+                                .HasColumnName("PresentationViewSecondsElapsed");
+
+                            b1.Property<string>("Status")
+                                .HasMaxLength(50)
+                                .HasColumnType("nvarchar(50)")
+                                .HasColumnName("Status");
+
+                            b1.Property<int?>("SuscriptionsViewSecondsElapsed")
+                                .HasColumnType("int")
+                                .HasColumnName("SuscriptionsViewSecondsElapsed");
+
+                            b1.Property<int?>("TestimonialsViewSecondsElapsed")
+                                .HasColumnType("int")
+                                .HasColumnName("TestimonialsViewSecondsElapsed");
+
+                            b1.Property<int?>("TrustElementsViewSecondsElapsed")
+                                .HasColumnType("int")
+                                .HasColumnName("TrustElementsViewSecondsElapsed");
+
+                            b1.Property<int?>("WhyUsViewSecondsElapsed")
+                                .HasColumnType("int")
+                                .HasColumnName("WhyUsViewSecondsElapsed");
+
+                            b1.HasKey("LandingUserEventId");
+
+                            b1.ToTable("LandingUserEvents", "MasterBase");
+
+                            b1.WithOwner()
+                                .HasForeignKey("LandingUserEventId");
+                        });
+
+                    b.Navigation("Details")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("NetShip.Entities.Modifier", b =>
@@ -873,6 +1102,10 @@ namespace NetShip.Migrations
             modelBuilder.Entity("NetShip.Entities.Branch", b =>
                 {
                     b.Navigation("Catalogs");
+
+                    b.Navigation("DeviceTracking");
+
+                    b.Navigation("Feedback");
                 });
 
             modelBuilder.Entity("NetShip.Entities.Brand", b =>

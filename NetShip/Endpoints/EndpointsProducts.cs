@@ -36,7 +36,45 @@ namespace NetShip.Endpoints
             group.MapGet("getByName/{productName}", getProductByName).WithName("GetProductByName")
                 .RequireAuthorization();
 
+            group.MapPut("/updateProductImage/{productId:Guid}", updateProductImage)
+             .WithName("UpdateProductImage")
+             .DisableAntiforgery()
+             .RequireAuthorization();
+
             return group;
+        }
+
+        static async Task<Results<NoContent, NotFound>> updateProductImage(
+               Guid productId,
+               [FromForm] UpdateProductImageRequest updateProductImageRequest,
+               IProductsRepository repository,
+               IMapper mapper,
+               IFileStorage fileStorage,
+               IOutputCacheStore outputCacheStore,
+               DigitalMenuService digitalMenuService)
+        {
+            var productToUpdate = await repository.GetById(productId);
+
+            if (productToUpdate == null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            if (updateProductImageRequest.Icon is not null)
+            {
+                var imageUrl = await fileStorage.Edit(productToUpdate.Icon, container, updateProductImageRequest.Icon);
+                productToUpdate.Icon = imageUrl;
+
+                await repository.Update(productToUpdate);
+                await digitalMenuService.UpdateDigitalMenuJsonForProduct(productId);
+                await outputCacheStore.EvictByTagAsync("get-products", default);
+
+                return TypedResults.NoContent();
+            }
+            else
+            {
+                return TypedResults.NoContent();
+            }
         }
 
         static async Task<Results<NoContent, NotFound>> createProduct(

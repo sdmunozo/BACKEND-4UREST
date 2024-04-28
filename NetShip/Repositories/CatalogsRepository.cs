@@ -16,6 +16,32 @@ namespace NetShip.Repositories
             _context = context;
         }
 
+        public async Task<ListOfCatalogsDTO> GetCatalogsByBranchName(string branchName)
+        {
+            var catalogs = await _context.Catalogs
+                .Where(c => c.Branch.Name.Contains(branchName))
+                .ToListAsync();
+
+            var catalogDTOs = catalogs.Select(c => new CatalogDetailsDTO
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Description = c.Description,
+                IsActive = c.IsActive,
+                IsScheduleActive = c.IsScheduleActive,
+                Sort = c.Sort,
+                Icon = c.Icon
+            }).ToList();
+
+            var result = new ListOfCatalogsDTO
+            {
+                Total = catalogDTOs.Count,
+                Catalogs = catalogDTOs
+            };
+
+            return result;
+        }
+
         public async Task<Catalog> CreateCatalog(Catalog catalog)
         {
             _context.Add(catalog);
@@ -73,6 +99,8 @@ namespace NetShip.Repositories
             _context.Update(catalog);
             await _context.SaveChangesAsync();
         }
+
+       
 
     }
 }

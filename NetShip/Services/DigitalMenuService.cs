@@ -242,6 +242,7 @@ namespace NetShip.Services
                 productInJson.Alias = product.Alias;
                 productInJson.Description = product.Description;
                 productInJson.Icon = product.Icon;
+                productInJson.Price = product.Price.ToString();
             }
             else
             {
@@ -321,7 +322,8 @@ namespace NetShip.Services
                 modifiersGroupInJson.Alias = modifiersGroup.Alias ?? "";
                 modifiersGroupInJson.Description = modifiersGroup.Description ?? "";
                 modifiersGroupInJson.Icon = modifiersGroup.Icon ?? "";
-                
+                modifiersGroupInJson.isSelectable = modifiersGroup.isSelectable.ToString();
+
                 /*modifiersGroupInJson.Modifiers = modifiersGroup.Modifiers.Select(modifier => new DTOs.DigitalMenu.Modifier
                 {
                     Id = modifier.Id.ToString(),

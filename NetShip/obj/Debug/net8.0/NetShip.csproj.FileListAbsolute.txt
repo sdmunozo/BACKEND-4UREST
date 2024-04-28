@@ -48,6 +48,8 @@ C:\Users\USER\Desktop\dev\BACKEND\NetShip\NetShip\bin\Debug\net8.0\Microsoft.Sql
 C:\Users\USER\Desktop\dev\BACKEND\NetShip\NetShip\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
 C:\Users\USER\Desktop\dev\BACKEND\NetShip\NetShip\bin\Debug\net8.0\Mono.TextTemplating.dll
 C:\Users\USER\Desktop\dev\BACKEND\NetShip\NetShip\bin\Debug\net8.0\Newtonsoft.Json.dll
+C:\Users\USER\Desktop\dev\BACKEND\NetShip\NetShip\bin\Debug\net8.0\OpenAI_API.dll
+C:\Users\USER\Desktop\dev\BACKEND\NetShip\NetShip\bin\Debug\net8.0\OpenAI-DotNet.dll
 C:\Users\USER\Desktop\dev\BACKEND\NetShip\NetShip\bin\Debug\net8.0\QRCoder.dll
 C:\Users\USER\Desktop\dev\BACKEND\NetShip\NetShip\bin\Debug\net8.0\SixLabors.ImageSharp.dll
 C:\Users\USER\Desktop\dev\BACKEND\NetShip\NetShip\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll

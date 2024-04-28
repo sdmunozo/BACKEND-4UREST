@@ -5,6 +5,7 @@ namespace NetShip.Repositories
 {
     public interface ICatalogsRepository
     {
+        Task<ListOfCatalogsDTO> GetCatalogsByBranchName(string branchName);
         Task<ListOfCatalogsDTO> GetCatalogsByBranchId(Guid branchId);
         Task<Catalog> CreateCatalog(Catalog catalog);
         Task UpdateCatalog(Catalog catalog);

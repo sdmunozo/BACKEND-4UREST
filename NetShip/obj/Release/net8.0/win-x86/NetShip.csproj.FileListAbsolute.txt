@@ -461,3 +461,5 @@ C:\Users\USER\Desktop\dev\BACKEND\NetShip\NetShip\bin\Release\net8.0\win-x86\msc
 C:\Users\USER\Desktop\dev\BACKEND\NetShip\NetShip\bin\Release\net8.0\win-x86\msquic.dll
 C:\Users\USER\Desktop\dev\BACKEND\NetShip\NetShip\bin\Release\net8.0\win-x86\aspnetcorev2_inprocess.dll
 C:\Users\USER\Desktop\dev\BACKEND\NetShip\NetShip\bin\Release\net8.0\win-x86\SixLabors.ImageSharp.dll
+C:\Users\USER\Desktop\dev\BACKEND\NetShip\NetShip\bin\Release\net8.0\win-x86\OpenAI_API.dll
+C:\Users\USER\Desktop\dev\BACKEND\NetShip\NetShip\bin\Release\net8.0\win-x86\OpenAI-DotNet.dll

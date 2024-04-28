@@ -889,3 +889,580 @@ GO
 COMMIT;
 GO
 
+BEGIN TRANSACTION;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240401063229_AddFeedback'
+)
+BEGIN
+    CREATE TABLE [MasterBase].[Feedback] (
+        [Id] uniqueidentifier NOT NULL,
+        [Mood] nvarchar(max) NOT NULL,
+        [Comment] nvarchar(max) NOT NULL,
+        [BranchId] uniqueidentifier NOT NULL,
+        [SessionId] nvarchar(max) NOT NULL,
+        [CreatedAt] datetime2 NOT NULL,
+        CONSTRAINT [PK_Feedback] PRIMARY KEY ([Id]),
+        CONSTRAINT [FK_Feedback_Branches_BranchId] FOREIGN KEY ([BranchId]) REFERENCES [MasterBase].[Branches] ([Id]) ON DELETE CASCADE
+    );
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240401063229_AddFeedback'
+)
+BEGIN
+    CREATE INDEX [IX_Feedback_BranchId] ON [MasterBase].[Feedback] ([BranchId]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240401063229_AddFeedback'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20240401063229_AddFeedback', N'8.0.3');
+END;
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240401065108_AddFeedbackUpdated'
+)
+BEGIN
+    ALTER TABLE [MasterBase].[Feedback] DROP CONSTRAINT [FK_Feedback_Branches_BranchId];
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240401065108_AddFeedbackUpdated'
+)
+BEGIN
+    ALTER TABLE [MasterBase].[Feedback] DROP CONSTRAINT [PK_Feedback];
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240401065108_AddFeedbackUpdated'
+)
+BEGIN
+    DECLARE @var13 sysname;
+    SELECT @var13 = [d].[name]
+    FROM [sys].[default_constraints] [d]
+    INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+    WHERE ([d].[parent_object_id] = OBJECT_ID(N'[MasterBase].[Feedback]') AND [c].[name] = N'Mood');
+    IF @var13 IS NOT NULL EXEC(N'ALTER TABLE [MasterBase].[Feedback] DROP CONSTRAINT [' + @var13 + '];');
+    ALTER TABLE [MasterBase].[Feedback] DROP COLUMN [Mood];
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240401065108_AddFeedbackUpdated'
+)
+BEGIN
+    EXEC sp_rename N'[MasterBase].[Feedback]', N'Feedbacks';
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240401065108_AddFeedbackUpdated'
+)
+BEGIN
+    EXEC sp_rename N'[MasterBase].[Feedbacks].[IX_Feedback_BranchId]', N'IX_Feedbacks_BranchId', N'INDEX';
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240401065108_AddFeedbackUpdated'
+)
+BEGIN
+    ALTER TABLE [MasterBase].[Feedbacks] ADD [Score] int NOT NULL DEFAULT 0;
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240401065108_AddFeedbackUpdated'
+)
+BEGIN
+    ALTER TABLE [MasterBase].[Feedbacks] ADD CONSTRAINT [PK_Feedbacks] PRIMARY KEY ([Id]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240401065108_AddFeedbackUpdated'
+)
+BEGIN
+    ALTER TABLE [MasterBase].[Feedbacks] ADD CONSTRAINT [FK_Feedbacks_Branches_BranchId] FOREIGN KEY ([BranchId]) REFERENCES [MasterBase].[Branches] ([Id]) ON DELETE CASCADE;
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240401065108_AddFeedbackUpdated'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20240401065108_AddFeedbackUpdated', N'8.0.3');
+END;
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240401172637_AddDeviceTracking'
+)
+BEGIN
+    CREATE TABLE [MasterBase].[DeviceTrackings] (
+        [Id] uniqueidentifier NOT NULL,
+        [BranchId] uniqueidentifier NOT NULL,
+        [SessionId] nvarchar(max) NOT NULL,
+        [UserAgent] nvarchar(max) NOT NULL,
+        [Platform] nvarchar(max) NOT NULL,
+        [Vendor] nvarchar(max) NOT NULL,
+        [Language] nvarchar(max) NOT NULL,
+        [Browser] nvarchar(max) NOT NULL,
+        [BrowserVersion] nvarchar(max) NOT NULL,
+        [OS] nvarchar(max) NOT NULL,
+        [PixelRatio] float NULL,
+        [ScreenWidth] int NULL,
+        [ScreenHeight] int NULL,
+        [Orientation] nvarchar(max) NOT NULL,
+        [CreatedAt] datetime2 NULL,
+        CONSTRAINT [PK_DeviceTrackings] PRIMARY KEY ([Id]),
+        CONSTRAINT [FK_DeviceTrackings_Branches_BranchId] FOREIGN KEY ([BranchId]) REFERENCES [MasterBase].[Branches] ([Id]) ON DELETE CASCADE
+    );
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240401172637_AddDeviceTracking'
+)
+BEGIN
+    CREATE INDEX [IX_DeviceTrackings_BranchId] ON [MasterBase].[DeviceTrackings] ([BranchId]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240401172637_AddDeviceTracking'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20240401172637_AddDeviceTracking', N'8.0.3');
+END;
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428204659_AddUserEvents'
+)
+BEGIN
+    CREATE TABLE [MasterBase].[UserEvents] (
+        [UserId] uniqueidentifier NOT NULL,
+        [SessionId] nvarchar(max) NOT NULL,
+        [EventType] nvarchar(max) NOT NULL,
+        [EventTimestamp] datetime NOT NULL,
+        [PresentationViewSecondsElapsed] int NULL,
+        [Details_MenuHighlightsViewSecondsElapsed] int NULL,
+        [Details_MenuScreensViewSecondsElapsed] int NULL,
+        [Details_ForWhoViewSecondsElapsed] int NULL,
+        [Details_WhyUsViewSecondsElapsed] int NULL,
+        [Details_SuscriptionsViewSecondsElapsed] int NULL,
+        [Details_TestimonialsViewSecondsElapsed] int NULL,
+        [Details_FaqViewSecondsElapsed] int NULL,
+        [Details_TrustElementsViewSecondsElapsed] int NULL,
+        [Details_LinkDestination] nvarchar(max) NOT NULL,
+        [Details_LinkLabel] nvarchar(max) NOT NULL,
+        [Details_PlaybackTime] int NULL,
+        [Details_Duration] int NULL,
+        [Details_ImageId] nvarchar(max) NOT NULL,
+        [Details_FAQId] nvarchar(max) NOT NULL,
+        [Details_Status] nvarchar(max) NOT NULL,
+        CONSTRAINT [PK_UserEvents] PRIMARY KEY ([UserId])
+    );
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428204659_AddUserEvents'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20240428204659_AddUserEvents', N'8.0.3');
+END;
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428212337_LandingEventsAdded'
+)
+BEGIN
+    DROP TABLE [MasterBase].[UserEvents];
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428212337_LandingEventsAdded'
+)
+BEGIN
+    CREATE TABLE [MasterBase].[LandingUserEvents] (
+        [UserId] uniqueidentifier NOT NULL,
+        [SessionId] nvarchar(max) NOT NULL,
+        [EventType] nvarchar(max) NOT NULL,
+        [EventTimestamp] datetime NOT NULL,
+        [PresentationViewSecondsElapsed] int NULL,
+        [Details_MenuHighlightsViewSecondsElapsed] int NULL,
+        [Details_MenuScreensViewSecondsElapsed] int NULL,
+        [Details_ForWhoViewSecondsElapsed] int NULL,
+        [Details_WhyUsViewSecondsElapsed] int NULL,
+        [Details_SuscriptionsViewSecondsElapsed] int NULL,
+        [Details_TestimonialsViewSecondsElapsed] int NULL,
+        [Details_FaqViewSecondsElapsed] int NULL,
+        [Details_TrustElementsViewSecondsElapsed] int NULL,
+        [Details_LinkDestination] nvarchar(max) NOT NULL,
+        [Details_LinkLabel] nvarchar(max) NOT NULL,
+        [Details_PlaybackTime] int NULL,
+        [Details_Duration] int NULL,
+        [Details_ImageId] nvarchar(max) NOT NULL,
+        [Details_FAQId] nvarchar(max) NOT NULL,
+        [Details_Status] nvarchar(max) NOT NULL,
+        CONSTRAINT [PK_LandingUserEvents] PRIMARY KEY ([UserId])
+    );
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428212337_LandingEventsAdded'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20240428212337_LandingEventsAdded', N'8.0.3');
+END;
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428212507_LandingEventsAdded2'
+)
+BEGIN
+    ALTER TABLE [MasterBase].[LandingUserEvents] ADD [Id] uniqueidentifier NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000';
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428212507_LandingEventsAdded2'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20240428212507_LandingEventsAdded2', N'8.0.3');
+END;
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428212626_LandingEventsAdded3'
+)
+BEGIN
+    ALTER TABLE [MasterBase].[LandingUserEvents] DROP CONSTRAINT [PK_LandingUserEvents];
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428212626_LandingEventsAdded3'
+)
+BEGIN
+    ALTER TABLE [MasterBase].[LandingUserEvents] ADD CONSTRAINT [PK_LandingUserEvents] PRIMARY KEY ([Id]);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428212626_LandingEventsAdded3'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20240428212626_LandingEventsAdded3', N'8.0.3');
+END;
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428223039_LandingEventsAdded4'
+)
+BEGIN
+    EXEC sp_rename N'[MasterBase].[LandingUserEvents].[Details_WhyUsViewSecondsElapsed]', N'WhyUsViewSecondsElapsed', N'COLUMN';
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428223039_LandingEventsAdded4'
+)
+BEGIN
+    EXEC sp_rename N'[MasterBase].[LandingUserEvents].[Details_TrustElementsViewSecondsElapsed]', N'TrustElementsViewSecondsElapsed', N'COLUMN';
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428223039_LandingEventsAdded4'
+)
+BEGIN
+    EXEC sp_rename N'[MasterBase].[LandingUserEvents].[Details_TestimonialsViewSecondsElapsed]', N'TestimonialsViewSecondsElapsed', N'COLUMN';
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428223039_LandingEventsAdded4'
+)
+BEGIN
+    EXEC sp_rename N'[MasterBase].[LandingUserEvents].[Details_SuscriptionsViewSecondsElapsed]', N'SuscriptionsViewSecondsElapsed', N'COLUMN';
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428223039_LandingEventsAdded4'
+)
+BEGIN
+    EXEC sp_rename N'[MasterBase].[LandingUserEvents].[Details_Status]', N'Status', N'COLUMN';
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428223039_LandingEventsAdded4'
+)
+BEGIN
+    EXEC sp_rename N'[MasterBase].[LandingUserEvents].[Details_PlaybackTime]', N'PlaybackTime', N'COLUMN';
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428223039_LandingEventsAdded4'
+)
+BEGIN
+    EXEC sp_rename N'[MasterBase].[LandingUserEvents].[Details_MenuScreensViewSecondsElapsed]', N'MenuScreensViewSecondsElapsed', N'COLUMN';
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428223039_LandingEventsAdded4'
+)
+BEGIN
+    EXEC sp_rename N'[MasterBase].[LandingUserEvents].[Details_MenuHighlightsViewSecondsElapsed]', N'MenuHighlightsViewSecondsElapsed', N'COLUMN';
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428223039_LandingEventsAdded4'
+)
+BEGIN
+    EXEC sp_rename N'[MasterBase].[LandingUserEvents].[Details_LinkLabel]', N'LinkLabel', N'COLUMN';
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428223039_LandingEventsAdded4'
+)
+BEGIN
+    EXEC sp_rename N'[MasterBase].[LandingUserEvents].[Details_LinkDestination]', N'LinkDestination', N'COLUMN';
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428223039_LandingEventsAdded4'
+)
+BEGIN
+    EXEC sp_rename N'[MasterBase].[LandingUserEvents].[Details_ImageId]', N'ImageId', N'COLUMN';
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428223039_LandingEventsAdded4'
+)
+BEGIN
+    EXEC sp_rename N'[MasterBase].[LandingUserEvents].[Details_ForWhoViewSecondsElapsed]', N'ForWhoViewSecondsElapsed', N'COLUMN';
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428223039_LandingEventsAdded4'
+)
+BEGIN
+    EXEC sp_rename N'[MasterBase].[LandingUserEvents].[Details_FaqViewSecondsElapsed]', N'FaqViewSecondsElapsed', N'COLUMN';
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428223039_LandingEventsAdded4'
+)
+BEGIN
+    EXEC sp_rename N'[MasterBase].[LandingUserEvents].[Details_FAQId]', N'FAQId', N'COLUMN';
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428223039_LandingEventsAdded4'
+)
+BEGIN
+    EXEC sp_rename N'[MasterBase].[LandingUserEvents].[Details_Duration]', N'Duration', N'COLUMN';
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428223039_LandingEventsAdded4'
+)
+BEGIN
+    DECLARE @var14 sysname;
+    SELECT @var14 = [d].[name]
+    FROM [sys].[default_constraints] [d]
+    INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+    WHERE ([d].[parent_object_id] = OBJECT_ID(N'[MasterBase].[LandingUserEvents]') AND [c].[name] = N'Status');
+    IF @var14 IS NOT NULL EXEC(N'ALTER TABLE [MasterBase].[LandingUserEvents] DROP CONSTRAINT [' + @var14 + '];');
+    ALTER TABLE [MasterBase].[LandingUserEvents] ALTER COLUMN [Status] nvarchar(50) NULL;
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428223039_LandingEventsAdded4'
+)
+BEGIN
+    DECLARE @var15 sysname;
+    SELECT @var15 = [d].[name]
+    FROM [sys].[default_constraints] [d]
+    INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+    WHERE ([d].[parent_object_id] = OBJECT_ID(N'[MasterBase].[LandingUserEvents]') AND [c].[name] = N'LinkLabel');
+    IF @var15 IS NOT NULL EXEC(N'ALTER TABLE [MasterBase].[LandingUserEvents] DROP CONSTRAINT [' + @var15 + '];');
+    ALTER TABLE [MasterBase].[LandingUserEvents] ALTER COLUMN [LinkLabel] nvarchar(256) NULL;
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428223039_LandingEventsAdded4'
+)
+BEGIN
+    DECLARE @var16 sysname;
+    SELECT @var16 = [d].[name]
+    FROM [sys].[default_constraints] [d]
+    INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+    WHERE ([d].[parent_object_id] = OBJECT_ID(N'[MasterBase].[LandingUserEvents]') AND [c].[name] = N'LinkDestination');
+    IF @var16 IS NOT NULL EXEC(N'ALTER TABLE [MasterBase].[LandingUserEvents] DROP CONSTRAINT [' + @var16 + '];');
+    ALTER TABLE [MasterBase].[LandingUserEvents] ALTER COLUMN [LinkDestination] nvarchar(256) NULL;
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428223039_LandingEventsAdded4'
+)
+BEGIN
+    DECLARE @var17 sysname;
+    SELECT @var17 = [d].[name]
+    FROM [sys].[default_constraints] [d]
+    INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+    WHERE ([d].[parent_object_id] = OBJECT_ID(N'[MasterBase].[LandingUserEvents]') AND [c].[name] = N'ImageId');
+    IF @var17 IS NOT NULL EXEC(N'ALTER TABLE [MasterBase].[LandingUserEvents] DROP CONSTRAINT [' + @var17 + '];');
+    ALTER TABLE [MasterBase].[LandingUserEvents] ALTER COLUMN [ImageId] nvarchar(128) NULL;
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428223039_LandingEventsAdded4'
+)
+BEGIN
+    DECLARE @var18 sysname;
+    SELECT @var18 = [d].[name]
+    FROM [sys].[default_constraints] [d]
+    INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+    WHERE ([d].[parent_object_id] = OBJECT_ID(N'[MasterBase].[LandingUserEvents]') AND [c].[name] = N'FAQId');
+    IF @var18 IS NOT NULL EXEC(N'ALTER TABLE [MasterBase].[LandingUserEvents] DROP CONSTRAINT [' + @var18 + '];');
+    ALTER TABLE [MasterBase].[LandingUserEvents] ALTER COLUMN [FAQId] nvarchar(128) NULL;
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240428223039_LandingEventsAdded4'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20240428223039_LandingEventsAdded4', N'8.0.3');
+END;
+GO
+
+COMMIT;
+GO
+
