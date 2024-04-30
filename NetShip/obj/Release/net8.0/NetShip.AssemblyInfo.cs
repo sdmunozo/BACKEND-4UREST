@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NetShip")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1f632050e925d65e8e8e58e62f19fcb834fd068b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4016b33ac31d27fe88e64370f4939c0aeae75cb9")]
 [assembly: System.Reflection.AssemblyProductAttribute("NetShip")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NetShip")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
