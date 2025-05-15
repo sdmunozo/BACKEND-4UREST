@@ -54,7 +54,7 @@ builder.Services.AddScoped<ILandingUserEventRepository, LandingUserEventReposito
 
 
 
-builder.Services.AddHttpClient<ChatService>();
+//builder.Services.AddHttpClient<ChatService>();
 builder.Services.AddScoped<QrCodeService>();
 
 //builder.Services.AddScoped<IFileStorage, FileLocalStorage>();
@@ -79,7 +79,9 @@ options.TokenValidationParameters = new TokenValidationParameters
     ValidateAudience = false,
     ValidateLifetime = true,
     ValidateIssuerSigningKey = true,
-    IssuerSigningKey = Keys.GetKey(builder.Configuration).First(),
+    IssuerSigningKey = Keys.GetKey(builder.Configuration).FirstOrDefault()
+    ?? throw new InvalidOperationException("No JWT signing key found in configuration."),
+    //IssuerSigningKey = Keys.GetKey(builder.Configuration).First(),
     //IssuerSigningKeys = Keys.GetAllKey(builder.Configuration),
     ClockSkew = TimeSpan.Zero
 });

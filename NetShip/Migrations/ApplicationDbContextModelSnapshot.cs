@@ -514,7 +514,8 @@ namespace NetShip.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("Price")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<int>("Sort")
                         .HasColumnType("int");
@@ -585,7 +586,8 @@ namespace NetShip.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("Price")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<int>("Sort")
                         .HasColumnType("int");
@@ -683,17 +685,18 @@ namespace NetShip.Migrations
 
             modelBuilder.Entity("NetShip.Entities.PricePerItemPerPlatform", b =>
                 {
-                    b.Property<Guid>("PlatformId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ItemId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PlatformId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("PlatformId1")
                         .HasColumnType("uniqueidentifier");
@@ -701,11 +704,14 @@ namespace NetShip.Migrations
                     b.Property<double?>("Price")
                         .HasColumnType("float");
 
-                    b.HasKey("PlatformId", "ItemId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ItemId");
 
                     b.HasIndex("PlatformId1");
+
+                    b.HasIndex("PlatformId", "ItemId")
+                        .IsUnique();
 
                     b.ToTable("PricePerItemPerPlatforms", "MasterBase");
                 });
@@ -772,7 +778,8 @@ namespace NetShip.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<int>("Sort")
                         .HasColumnType("int");
