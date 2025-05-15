@@ -1,4 +1,33 @@
+# Configuración de Visual Studio
 .vs/
+*.user
+*.suo
 
-# Excluir archivos de configuración
+# Archivos de compilación
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.cache
+
+# Archivos generados por .NET
+project.lock.json
+project.fragment.lock.json
+artifacts/
+*.log
+
+# Archivos de migraciones compiladas (opcionales si quieres mantener solo los .cs)
+**/*.Designer.cs
+
+# Archivos de configuración locales
 **/appsettings*.json
+secrets.json
+*.db
+
+# Archivos específicos de OS
+.DS_Store
+Thumbs.db
+
+# Visual Studio Code
+.vscode/
