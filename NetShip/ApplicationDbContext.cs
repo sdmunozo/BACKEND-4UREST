@@ -122,6 +122,166 @@ namespace NetShip
                 .Property(p => p.Price)
                 .HasPrecision(10, 2);
 
+            // Configure new entities for tablet system
+            // Waiter
+            modelBuilder.Entity<Waiter>()
+                .HasOne(w => w.Branch)
+                .WithMany()
+                .HasForeignKey(w => w.BranchId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Area
+            modelBuilder.Entity<Area>()
+                .HasOne(a => a.Branch)
+                .WithMany()
+                .HasForeignKey(a => a.BranchId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Table
+            modelBuilder.Entity<Table>()
+                .HasOne(t => t.Area)
+                .WithMany(a => a.Tables)
+                .HasForeignKey(t => t.AreaId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Table>()
+                .HasOne(t => t.CurrentSession)
+                .WithOne()
+                .HasForeignKey<Table>(t => t.CurrentSessionId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // TableSession
+            modelBuilder.Entity<TableSession>()
+                .HasOne(ts => ts.Table)
+                .WithMany(t => t.Sessions)
+                .HasForeignKey(ts => ts.TableId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<TableSession>()
+                .HasOne(ts => ts.Waiter)
+                .WithMany(w => w.TableSessions)
+                .HasForeignKey(ts => ts.WaiterId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Customer
+            modelBuilder.Entity<Customer>()
+                .HasOne(c => c.Branch)
+                .WithMany()
+                .HasForeignKey(c => c.BranchId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Customer>()
+                .HasIndex(c => new { c.BranchId, c.PhoneNumber })
+                .IsUnique();
+
+            // Order
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.Table)
+                .WithMany(t => t.Orders)
+                .HasForeignKey(o => o.TableId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.Waiter)
+                .WithMany(w => w.Orders)
+                .HasForeignKey(o => o.WaiterId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.Customer)
+                .WithMany(c => c.Orders)
+                .HasForeignKey(o => o.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.Session)
+                .WithMany(ts => ts.Orders)
+                .HasForeignKey(o => o.SessionId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // OrderItem
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(oi => oi.Order)
+                .WithMany(o => o.OrderItems)
+                .HasForeignKey(oi => oi.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(oi => oi.Product)
+                .WithMany()
+                .HasForeignKey(oi => oi.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(oi => oi.Item)
+                .WithMany()
+                .HasForeignKey(oi => oi.ItemId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // OrderItemModifier
+            modelBuilder.Entity<OrderItemModifier>()
+                .HasOne(oim => oim.OrderItem)
+                .WithMany(oi => oi.Modifiers)
+                .HasForeignKey(oim => oim.OrderItemId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<OrderItemModifier>()
+                .HasOne(oim => oim.Modifier)
+                .WithMany()
+                .HasForeignKey(oim => oim.ModifierId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // ServiceRequest
+            modelBuilder.Entity<ServiceRequest>()
+                .HasOne(sr => sr.Table)
+                .WithMany(t => t.ServiceRequests)
+                .HasForeignKey(sr => sr.TableId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ServiceRequest>()
+                .HasOne(sr => sr.Waiter)
+                .WithMany(w => w.ServiceRequests)
+                .HasForeignKey(sr => sr.WaiterId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ServiceRequest>()
+                .HasOne(sr => sr.RespondedByWaiter)
+                .WithMany()
+                .HasForeignKey(sr => sr.RespondedByWaiterId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Payment
+            modelBuilder.Entity<Payment>()
+                .HasOne(p => p.Order)
+                .WithMany(o => o.Payments)
+                .HasForeignKey(p => p.OrderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Payment>()
+                .HasOne(p => p.ProcessedByWaiter)
+                .WithMany()
+                .HasForeignKey(p => p.ProcessedByWaiterId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // LoyaltyTransaction
+            modelBuilder.Entity<LoyaltyTransaction>()
+                .HasOne(lt => lt.Customer)
+                .WithMany(c => c.LoyaltyTransactions)
+                .HasForeignKey(lt => lt.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<LoyaltyTransaction>()
+                .HasOne(lt => lt.Order)
+                .WithMany()
+                .HasForeignKey(lt => lt.OrderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<LoyaltyTransaction>()
+                .HasOne(lt => lt.ProcessedBy)
+                .WithMany()
+                .HasForeignKey(lt => lt.ProcessedById)
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
@@ -141,6 +301,19 @@ namespace NetShip
 
         public DbSet<PricePerModifierPerPlatform> PricePerModifierPerPlatforms { get; set; }
         public DbSet<PricePerItemPerPlatform> PricePerItemPerPlatforms { get; set; }
+        
+        // New entities for tablet system
+        public DbSet<Waiter> Waiters { get; set; }
+        public DbSet<Area> Areas { get; set; }
+        public DbSet<Table> Tables { get; set; }
+        public DbSet<TableSession> TableSessions { get; set; }
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<OrderItemModifier> OrderItemModifiers { get; set; }
+        public DbSet<ServiceRequest> ServiceRequests { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+        public DbSet<LoyaltyTransaction> LoyaltyTransactions { get; set; }
     }
 }
 
